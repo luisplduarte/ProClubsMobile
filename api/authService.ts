@@ -4,7 +4,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } f
 export const signUp = async (email: string, password: string) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    return userCredential.user;
+    return userCredential.user.getIdToken();
   } catch (error) {
     console.error("Error during sign-up:", error);
     throw error;
