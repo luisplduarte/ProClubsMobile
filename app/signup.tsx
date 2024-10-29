@@ -1,20 +1,21 @@
-// LoginScreen.js
+// SignUpScreen.js
 import React, { useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useRouter } from "expo-router";
 import { useForm, Controller, FieldValues } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
-import { logIn } from '../api/authService';
+import { signUp } from '../api/authService';
 import { saveAccessToken } from '../utils/secureStore';
 
-export default function LoginScreen() {
+export default function SignUpScreen() {
   const router = useRouter();
-  const { control, handleSubmit, formState: { errors } } = useForm();
+  const { control, handleSubmit, watch, formState: { errors } } = useForm();
   const [error, setError] = useState('');
+  const password = watch('password');
 
   const mutation = useMutation({
     mutationFn: async (data: FieldValues) => {
-      const accessToken = await logIn(data.email, data.password);
+      const accessToken = await signUp(data.email, data.password);
       await saveAccessToken(accessToken);
       return accessToken;
     },
@@ -22,7 +23,7 @@ export default function LoginScreen() {
       router.replace('/');
     },
     onError: () => {
-      setError("Login failed. Please check your credentials.");
+      setError("Sign up failed. Please try again.");
     },
   });
 
@@ -33,7 +34,8 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      <Text style={styles.text}>Sign Up</Text>
+      
       <Controller
         control={control}
         rules={{ 
@@ -73,13 +75,37 @@ export default function LoginScreen() {
       />
       {errors.password && typeof errors.password.message === 'string' && <Text style={styles.error}>{errors.password.message}</Text>}
 
-      <Button title="Login" onPress={handleSubmit(onSubmit)} disabled={mutation.status === 'pending'} />
+      <Controller
+        control={control}
+        rules={{
+          required: 'Confirm password is required',
+          validate: (value) => value === password || 'Passwords do not match',
+        }}
+        render={({ field: { onChange, value } }) => (
+          <TextInput
+            placeholder="Confirm Password"
+            value={value}
+            onChangeText={onChange}
+            secureTextEntry
+            style={styles.input}
+          />
+        )}
+        name="confirmPassword"
+        defaultValue=""
+      />
+      {errors.confirmPassword && typeof errors.confirmPassword.message === 'string' && (
+        <Text style={styles.error}>{errors.confirmPassword.message}</Text>
+      )}
+
+      <Button 
+        title="Sign Up" 
+        onPress={handleSubmit(onSubmit)} 
+        disabled={mutation.status === 'pending'} 
+      />
 
       {mutation.status === 'pending' && <ActivityIndicator size="small" color="#0000ff" />}
 
       {error && <Text style={styles.error}>{error}</Text>}
-
-      <Text style={styles.text}>Not a member? Sign up now</Text>
     </View>
   );
 }
@@ -102,12 +128,8 @@ const styles = StyleSheet.create({
     color: 'red',
     marginBottom: 8,
   },
-  title: {
-    color: '#fff',
-    fontSize: 20,
-  },
   text: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 20,
   },
 });

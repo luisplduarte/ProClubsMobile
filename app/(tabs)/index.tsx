@@ -1,14 +1,13 @@
 import { View, StyleSheet } from 'react-native';
 import Toast from 'react-native-root-toast';
-import { useRouter } from "expo-router";
 import ImageViewer from "@/components/ImageViewer";
 import Button from '@/components/Button';
-import LogoutButton from '@/components/LogoutButton';
 import { ButtonTypes } from '@/types/ButtonTypes';
 
 const PlaceholderImage = require('@/assets/images/test_image.jpg');
 
 export default function Index() {
+
   const onButtonPressed = () => {
     console.log("onButtonPressed called");
   
