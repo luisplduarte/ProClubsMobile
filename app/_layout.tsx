@@ -1,9 +1,11 @@
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { setStatusBarStyle } from "expo-status-bar";
 import { useEffect } from "react";
 import * as SplashScreen from 'expo-splash-screen';
 import { RootSiblingParent } from 'react-native-root-siblings';
+import ProtectedRoute from '../components/ProtectedRoute';
+import { useAuth } from '../hooks/useAuth';
 
 const queryClient = new QueryClient();
 
@@ -12,6 +14,9 @@ const queryClient = new QueryClient();
 // setTimeout(SplashScreen.hideAsync, 5000);
 
 export default function RootLayout() {
+  const user = useAuth();
+  const router = useRouter();
+
   // Sets the status bar style to light when the app loads
   useEffect(() => {
     setTimeout(() => {
@@ -19,13 +24,19 @@ export default function RootLayout() {
     }, 0);
   }, []);
 
+  useEffect(() => {
+    if (!user) {
+      router.replace('/login');
+    }
+  }, [user]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <RootSiblingParent>
         <Stack>
+          <Stack.Screen name="login" />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
-          <Stack.Screen name="login" />
         </Stack>
       </RootSiblingParent>
     </QueryClientProvider>

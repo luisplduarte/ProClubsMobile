@@ -1,17 +1,21 @@
 // LoginScreen.js
 import React, { useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
+import { useRouter } from "expo-router";
 import { logIn } from '../api/authService';
+import { saveAccessToken } from '../utils/secureStore';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const router = useRouter();
 
   const handleLogin = async () => {
     try {
-      await logIn(email, password);
-      alert("Login successful!");
+      const accessToken = await logIn(email, password);
+      await saveAccessToken(accessToken);
+      router.replace('/');
     } catch (error) {
       setError("Login failed. Please check your credentials.");
     }

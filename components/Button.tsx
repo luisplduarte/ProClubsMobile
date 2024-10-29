@@ -1,69 +1,59 @@
-import { StyleSheet, View, Pressable, Text } from 'react-native';
+import { StyleSheet, View, Pressable, Text, ViewStyle } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import Toast from 'react-native-root-toast';
+import { ButtonTypes } from '../types/ButtonTypes'
 
 type Props = {
   label: string;
-  theme?: 'primary';
+  theme?: ButtonTypes;
+  style?: ViewStyle;
+  icon?: string;
+  onPress: () => void;
 };
 
-const onButtonPressed = () => {
-  console.log("onButtonPressed called");
+export default function Button({ label, theme, style, icon, onPress }: Props) {
+  const primaryStyles = theme === 'primary'
+    ? { borderWidth: 4, borderColor: '#ffd33d', backgroundColor: '#fff' }
+    : theme === 'logout' 
+    ? { backgroundColor: '#ff5c5c' } : {};
 
-  return Toast.show('Button pressed.', {
-    duration: Toast.durations.LONG,
-  });
+  return (
+    <View style={[styles.buttonContainer, primaryStyles, style]}>
+      <Pressable style={[styles.button]} onPress={onPress}>
+        {theme === 'primary' && (
+          <FontAwesome name="picture-o" size={18} color="#25292e" style={styles.buttonIcon} />
+        )}
+         {theme === 'logout' && (
+          <FontAwesome name="sign-out" size={18} color="#fff" style={styles.buttonIcon} />
+        )}
+        <Text style={[styles.buttonLabel, theme === 'primary' ? { color: '#25292e' } : {}]}>
+          {label}
+        </Text>
+      </Pressable>
+    </View>
+  );
 };
 
-export default function Button({ label, theme }: Props) {
-    if (theme === 'primary') {
-      return (
-        <View
-          style={[
-            styles.buttonContainer,
-            { borderWidth: 4, borderColor: '#ffd33d', borderRadius: 18 },
-          ]}>
-          <Pressable
-            style={[styles.button, { backgroundColor: '#fff' }]}
-            onPress={() => onButtonPressed()}>
-            <FontAwesome name="picture-o" size={18} color="#25292e" style={styles.buttonIcon} />
-            <Text style={[styles.buttonLabel, { color: '#25292e' }]}>{label}</Text>
-          </Pressable>
-        </View>
-      );
-    }
-  
-    return (
-      <View style={styles.buttonContainer}>
-        <Pressable style={styles.button} onPress={() => onButtonPressed()}>
-          <Text style={styles.buttonLabel}>{label}</Text>
-        </Pressable>
-      </View>
-    );
-  }
-
-  const styles = StyleSheet.create({
-    buttonContainer: {
-      width: 320,
-      height: 68,
-      marginHorizontal: 20,
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: 3,
-    },
-    button: {
-      borderRadius: 10,
-      width: '100%',
-      height: '100%',
-      alignItems: 'center',
-      justifyContent: 'center',
-      flexDirection: 'row',
-    },
-    buttonIcon: {
-      paddingRight: 8,
-    },
-    buttonLabel: {
-      color: '#fff',
-      fontSize: 16,
-    },
-  });
+const styles = StyleSheet.create({
+  buttonContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+    borderRadius: 18,
+    margin: 4,
+  },
+  button: {
+    borderRadius: 10,
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+  },
+  buttonIcon: {
+    paddingRight: 8,
+  },
+  buttonLabel: {
+    color: '#fff',
+    fontSize: 16,
+  },
+});
