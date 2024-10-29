@@ -6,26 +6,32 @@ type Props = {
   label: string;
   theme?: ButtonTypes;
   style?: ViewStyle;
-  icon?: string;
   onPress: () => void;
 };
 
-export default function Button({ label, theme, style, icon, onPress }: Props) {
-  const primaryStyles = theme === 'primary'
-    ? { borderWidth: 4, borderColor: '#ffd33d', backgroundColor: '#fff' }
-    : theme === 'logout' 
-    ? { backgroundColor: '#ff5c5c' } : {};
+export default function Button({ label, theme, style, onPress }: Props) {
+  const themeStyles = {
+    primary: {
+      container: { borderWidth: 4, borderColor: '#ffd33d', backgroundColor: '#fff' },
+      label: { color: '#25292e' },
+      icon: { name: 'picture-o' as 'picture-o', color: '#25292e' },
+    },
+    logout: {
+      container: { backgroundColor: '#ff5c5c' },
+      label: { color: '#fff' },
+      icon: { name: 'sign-out' as 'sign-out', color: '#fff' },
+    },
+    default: {
+      container: { backgroundColor: '#fff' },
+      label: { color: '#25292e' },
+    },
+  }[theme || 'default'];
 
   return (
-    <View style={[styles.buttonContainer, primaryStyles, style]}>
-      <Pressable style={[styles.button]} onPress={onPress}>
-        {theme === 'primary' && (
-          <FontAwesome name="picture-o" size={18} color="#25292e" style={styles.buttonIcon} />
-        )}
-         {theme === 'logout' && (
-          <FontAwesome name="sign-out" size={18} color="#fff" style={styles.buttonIcon} />
-        )}
-        <Text style={[styles.buttonLabel, theme === 'primary' ? { color: '#25292e' } : {}]}>
+    <View style={[styles.buttonContainer, themeStyles.container, style]}>
+      <Pressable style={styles.button} onPress={onPress}>
+        { themeStyles.icon && <FontAwesome name={themeStyles.icon.name} size={18} color={themeStyles.icon.color}  style={styles.buttonIcon} /> }
+        <Text style={[styles.buttonLabel, themeStyles.label]}>
           {label}
         </Text>
       </Pressable>
@@ -37,23 +43,21 @@ const styles = StyleSheet.create({
   buttonContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 16,
-    borderRadius: 18,
+    borderRadius: 16,
     margin: 4,
   },
   button: {
-    borderRadius: 10,
     width: '100%',
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
+    padding: 14,
   },
   buttonIcon: {
     paddingRight: 8,
   },
   buttonLabel: {
-    color: '#fff',
     fontSize: 16,
   },
 });
