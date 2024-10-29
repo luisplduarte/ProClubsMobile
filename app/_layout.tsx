@@ -1,4 +1,6 @@
 import { Stack, useRouter } from "expo-router";
+import "@/global.css";
+import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { setStatusBarStyle } from "expo-status-bar";
 import { useEffect } from "react";
@@ -31,14 +33,16 @@ export default function RootLayout() {
   }, [user]);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <RootSiblingParent>
-        <Stack>
-          <Stack.Screen name="login" />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-      </RootSiblingParent>
-    </QueryClientProvider>
+    <GluestackUIProvider mode="light"><QueryClientProvider client={queryClient}>
+        <RootSiblingParent>
+          <Stack>
+            <Stack.Screen name="login" />
+            <Stack.Screen name="signup" />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+        </RootSiblingParent>
+      </QueryClientProvider>
+    </GluestackUIProvider>
   );
 }

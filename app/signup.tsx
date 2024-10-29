@@ -4,6 +4,7 @@ import { View, TextInput, Button, Text, StyleSheet, ActivityIndicator } from 're
 import { useRouter } from "expo-router";
 import { useForm, Controller, FieldValues } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
+import { Link, LinkText } from '@/components/ui/link';
 import { signUp } from '../api/authService';
 import { saveAccessToken } from '../utils/secureStore';
 
@@ -22,8 +23,9 @@ export default function SignUpScreen() {
     onSuccess: () => {
       router.replace('/');
     },
-    onError: () => {
-      setError("Sign up failed. Please try again.");
+    onError: (err) => {
+      console.log("err = ", err);
+      setError(err.toString());
     },
   });
 
@@ -34,7 +36,13 @@ export default function SignUpScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Sign Up</Text>
+      <Text style={styles.title}>Sign Up</Text>
+      <Text style={styles.text}>
+        Create a free account or
+        <Link>
+          <LinkText style={styles.text} onPress={() => router.replace('/login')}> log in</LinkText>
+        </Link>
+      </Text>
       
       <Controller
         control={control}
@@ -51,6 +59,7 @@ export default function SignUpScreen() {
             value={value}
             onChangeText={onChange}
             style={styles.input}
+            placeholderTextColor="#000"
           />
         )}
         name="email"
@@ -68,6 +77,7 @@ export default function SignUpScreen() {
             onChangeText={onChange}
             secureTextEntry
             style={styles.input}
+            placeholderTextColor="#000"
           />
         )}
         name="password"
@@ -88,6 +98,7 @@ export default function SignUpScreen() {
             onChangeText={onChange}
             secureTextEntry
             style={styles.input}
+            placeholderTextColor="#000"
           />
         )}
         name="confirmPassword"
@@ -123,13 +134,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 12,
     paddingHorizontal: 8,
+    backgroundColor: '#fff',
   },
   error: {
     color: 'red',
     marginBottom: 8,
   },
-  text: {
+  title: {
     color: '#fff',
     fontSize: 20,
+  },
+  text: {
+    color: '#fff',
+    fontSize: 16,
   },
 });

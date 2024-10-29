@@ -4,6 +4,7 @@ import { View, TextInput, Button, Text, StyleSheet, ActivityIndicator } from 're
 import { useRouter } from "expo-router";
 import { useForm, Controller, FieldValues } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
+import { Link, LinkText } from '@/components/ui/link';
 import { logIn } from '../api/authService';
 import { saveAccessToken } from '../utils/secureStore';
 
@@ -31,6 +32,10 @@ export default function LoginScreen() {
     mutation.mutate(data);
   };
 
+  const handleSignup = () => {
+    router.replace('/signup');
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Login</Text>
@@ -49,6 +54,7 @@ export default function LoginScreen() {
             value={value}
             onChangeText={onChange}
             style={styles.input}
+            placeholderTextColor="#000"
           />
         )}
         name="email"
@@ -66,6 +72,7 @@ export default function LoginScreen() {
             onChangeText={onChange}
             secureTextEntry
             style={styles.input}
+            placeholderTextColor="#000"
           />
         )}
         name="password"
@@ -79,7 +86,13 @@ export default function LoginScreen() {
 
       {error && <Text style={styles.error}>{error}</Text>}
 
-      <Text style={styles.text}>Not a member? Sign up now</Text>
+      <Text style={styles.text}>
+        Not a member?
+        <Link>
+          <LinkText style={styles.text} onPress={() => router.replace('/signup')}> Sign up now</LinkText>
+        </Link>
+      </Text>
+      
     </View>
   );
 }
@@ -97,6 +110,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 12,
     paddingHorizontal: 8,
+    backgroundColor: '#fff',
   },
   error: {
     color: 'red',
