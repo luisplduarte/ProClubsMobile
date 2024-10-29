@@ -14,7 +14,7 @@ export const signUp = async (email: string, password: string) => {
 export const logIn = async (email: string, password: string) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    return userCredential.user;
+    return userCredential.user.getIdToken();
   } catch (error) {
     console.error("Error during login:", error);
     throw error;

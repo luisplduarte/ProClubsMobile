@@ -1,18 +1,30 @@
 import { View, StyleSheet } from 'react-native';
+import Toast from 'react-native-root-toast';
+import { useRouter } from "expo-router";
 import ImageViewer from "@/components/ImageViewer";
 import Button from '@/components/Button';
+import LogoutButton from '@/components/LogoutButton';
+import { ButtonTypes } from '@/types/ButtonTypes';
 
 const PlaceholderImage = require('@/assets/images/test_image.jpg');
 
 export default function Index() {
+  const onButtonPressed = () => {
+    console.log("onButtonPressed called");
+  
+    return Toast.show('Button pressed.', {
+      duration: Toast.durations.LONG,
+    });
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <ImageViewer imgSource={PlaceholderImage} />
       </View>
       <View style={styles.footerContainer}>
-        <Button theme="primary" label="Choose a photo" />
-        <Button label="Use this photo" />
+        <Button theme={ButtonTypes.PRIMARY} label="Choose a photo" onPress={() => onButtonPressed()} />
+        <Button label="Use this photo" onPress={() => onButtonPressed()}/>
       </View>
     </View>
   );
