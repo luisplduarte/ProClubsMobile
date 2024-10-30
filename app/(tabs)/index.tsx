@@ -1,29 +1,14 @@
-import { View, StyleSheet } from 'react-native';
-import Toast from 'react-native-root-toast';
+import { View, StyleSheet, Text, ActivityIndicator } from 'react-native';
 import ImageViewer from "@/components/ImageViewer";
-import Button from '@/components/Button';
-import { ButtonTypes } from '@/types/ButtonTypes';
 
-const PlaceholderImage = require('@/assets/images/test_image.jpg');
+const PlaceholderImage = require('@/assets/images/splash.png');
 
 export default function Index() {
-
-  const onButtonPressed = () => {
-    console.log("onButtonPressed called");
-  
-    return Toast.show('Button pressed.', {
-      duration: Toast.durations.LONG,
-    });
-  };
-
   return (
     <View style={styles.container}>
+      <Text style={styles.headerText}>Trio Mágico App</Text>
       <View style={styles.imageContainer}>
         <ImageViewer imgSource={PlaceholderImage} />
-      </View>
-      <View style={styles.footerContainer}>
-        <Button theme={ButtonTypes.PRIMARY} label="Choose a photo" onPress={() => onButtonPressed()} />
-        <Button label="Use this photo" onPress={() => onButtonPressed()}/>
       </View>
     </View>
   );
@@ -36,10 +21,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   imageContainer: {
-    flex: 1,
+    paddingBottom: 16,
   },
-  footerContainer: {
-    flex: 1 / 3,
-    alignItems: 'center',
+  headerText: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    paddingBottom: 16,
   },
 });

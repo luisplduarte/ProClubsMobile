@@ -28,7 +28,8 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (!user) {
-      router.replace('/login');
+      // TODO: remove the comment here after testing app
+      // router.replace('/login');
     }
   }, [user]);
 

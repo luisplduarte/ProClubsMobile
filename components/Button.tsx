@@ -12,7 +12,7 @@ type Props = {
 export default function Button({ label, theme, style, onPress }: Props) {
   const themeStyles = {
     primary: {
-      container: { borderWidth: 4, borderColor: '#ffd33d', backgroundColor: '#fff' },
+      container: { borderWidth: 4, borderColor: '#C02727', backgroundColor: '#fff' },
       label: { color: '#25292e' },
       icon: { name: 'picture-o' as 'picture-o', color: '#25292e' },
     },
