@@ -9,6 +9,7 @@ export interface Player {
     shotSuccessRate: string,
     passesMade: string,
     passSuccessRate: string,
+    //TODO: map property "ratingAve" to "ratingAverage"
     ratingAve: string,
     tacklesMade: string,
     tackleSuccessRate: string,
