@@ -1,25 +1,14 @@
-import { View, StyleSheet, Text, ActivityIndicator, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
+import { View, StyleSheet, Text, ActivityIndicator, Dimensions, ScrollView } from 'react-native';
+import React from 'react';
 import Carousel from 'react-native-reanimated-carousel';
 import { useQuery } from '@tanstack/react-query';
 import { fetchClubPlayers } from '../../api/clubService';
 import { ClubPlayersInfo, Player } from '@/types/PlayerTypes';
-import CardLayout from '@/components/cards/CardLayout';
+import StatSection from '@/components/StatSection';
 
 const { width: screenWidth } = Dimensions.get('window');
 
 export default function Squad() { 
-  const [showAllTopMatchesPlayed, setShowAllTopMatchesPlayed] = useState(false);
-  const [showAllTopManOfTheMatch, setShowAllTopManOfTheMatch] = useState(false);
-  const [showAllTopScorers, setShowAllTopScorers] = useState(false);
-  const [showAllTopAssists, setShowAllTopAssists] = useState(false);
-  const [showAllTopGoalsAndAssists, setShowAllTopGoalsAndAssists] = useState(false);
-  const [showAllTopRatings, setShowAllTopRatings] = useState(false);
-  const [showAllTopPassesPerMatch, setShowAllTopPassesPerMatch] = useState(false);
-  const [showAllTopPassSuccessRate, setShowAllTopPassSuccessRate] = useState(false);
-  const [showAllTopTacklesPerMatch, setShowAllTopTacklesPerMatch] = useState(false);
-  const [showAllTopTackleSuccessRate, setShowAllTopTackleSuccessRate] = useState(false);
-  const [showAllTopDefensiveCleanSheets, setShowAllTopDefensiveCleanSheets] = useState(false);
   const { data: clubPlayers, isLoading, error } = useQuery<ClubPlayersInfo, Error>(
     {
       queryKey: ['clubPlayers'],
@@ -39,58 +28,19 @@ export default function Squad() {
     );
   }
 
-  const topMatchesPlayed = clubPlayers?.members
-    .slice()
-    .sort((a: Player, b: Player) => parseInt(b.gamesPlayed) - parseInt(a.gamesPlayed))
-
-  const topManOfTheMatch = clubPlayers?.members
-    .slice()
-    .sort((a: Player, b: Player) => parseInt(b.manOfTheMatch) - parseInt(a.manOfTheMatch))
-
-  const topScorers = clubPlayers?.members
-    .slice()
-    .sort((a: Player, b: Player) => parseInt(b.goals) - parseInt(a.goals))
-
-  const topAssists = clubPlayers?.members
-    .slice()
-    .sort((a: Player, b: Player) => parseInt(b.assists) - parseInt(a.assists))
-
-  const topGoalsAndAssists = clubPlayers?.members
-    .slice()
-    .sort((a: Player, b: Player) => (parseInt(b.goals) + parseInt(b.assists)) - (parseInt(a.goals) + parseInt(a.assists)))
-
-  const topAverageRating = clubPlayers?.members
-    .slice()
-    .sort((a: Player, b: Player) => parseFloat(b.ratingAve) - parseFloat(a.ratingAve))
-
-  const topPassesPerMatch = clubPlayers?.members
-    .slice()
-    .sort((a: Player, b: Player) => (parseInt(b.passesMade) / parseInt(b.gamesPlayed)) - (parseInt(a.passesMade) / parseInt(a.gamesPlayed)))
-
-  const topPassSuccessRate = clubPlayers?.members
-    .slice()
-    .sort((a: Player, b: Player) => parseFloat(b.passSuccessRate) - parseFloat(a.passSuccessRate))
-
-  const topTacklesPerMatch = clubPlayers?.members
-    .slice()
-    .sort((a: Player, b: Player) => (parseInt(b.tacklesMade) / parseInt(b.gamesPlayed)) - (parseInt(a.tacklesMade) / parseInt(a.gamesPlayed)))
-
-  const topTackleSuccessRate = clubPlayers?.members
-    .slice()
-    .sort((a: Player, b: Player) => parseInt(b.tackleSuccessRate) - parseInt(a.tackleSuccessRate))
-
-  const topDefensiveCleanSheets = clubPlayers?.members
-    .slice()
-    .sort((a: Player, b: Player) => parseInt(b.cleanSheetsDef) - parseInt(a.cleanSheetsDef))
-
-  const renderPlayerItem = ({ item }: { item: Player }) => (
-    <View style={styles.carouselItem}>
-      <Text style={styles.text}>{item.name}</Text>
-      <Text style={styles.playerDetails}>Goals: {item.goals}</Text>
-      <Text style={styles.playerDetails}>Assists: {item.assists}</Text>
-      <Text style={styles.playerDetails}>Rating: {item.ratingAve}</Text>
-    </View>
-  );
+  const sortedStats = {
+    topMatchesPlayed: clubPlayers?.members.slice().sort((a, b) => parseInt(b.gamesPlayed) - parseInt(a.gamesPlayed)) || [],
+    topManOfTheMatch: clubPlayers?.members.slice().sort((a, b) => parseInt(b.manOfTheMatch) - parseInt(a.manOfTheMatch)) || [],
+    topScorers: clubPlayers?.members.slice().sort((a, b) => parseInt(b.goals) - parseInt(a.goals)) || [],
+    topAssists: clubPlayers?.members.slice().sort((a, b) => parseInt(b.assists) - parseInt(a.assists)) || [],
+    topGoalsAndAssists: clubPlayers?.members.slice().sort((a, b) => (parseInt(b.goals) + parseInt(b.assists)) - (parseInt(a.goals) + parseInt(a.assists))) || [],
+    topAverageRating: clubPlayers?.members.slice().sort((a, b) => parseFloat(b.ratingAve) - parseFloat(a.ratingAve)) || [],
+    topPassesPerMatch: clubPlayers?.members.slice().sort((a, b) => (parseInt(b.passesMade) / parseInt(b.gamesPlayed)) - (parseInt(a.passesMade) / parseInt(a.gamesPlayed))) || [],
+    topPassSuccessRate: clubPlayers?.members.slice().sort((a, b) => parseFloat(b.passSuccessRate) - parseFloat(a.passSuccessRate)) || [],
+    topTacklesPerMatch: clubPlayers?.members.slice().sort((a, b) => (parseInt(b.tacklesMade) / parseInt(b.gamesPlayed)) - (parseInt(a.tacklesMade) / parseInt(a.gamesPlayed))) || [],
+    topTackleSuccessRate: clubPlayers?.members.slice().sort((a, b) => parseInt(b.tackleSuccessRate) - parseInt(a.tackleSuccessRate)) || [],
+    topDefensiveCleanSheets: clubPlayers?.members.slice().sort((a, b) => parseInt(b.cleanSheetsDef) - parseInt(a.cleanSheetsDef)) || [],
+  };
 
   return (
     <View style={styles.container}>
@@ -104,177 +54,29 @@ export default function Squad() {
             mode="parallax"
             data={clubPlayers.members}
             scrollAnimationDuration={1000}
-            renderItem={renderPlayerItem}
+            renderItem={({ item }: { item: Player }) => (
+              <View style={styles.carouselItem}>
+                <Text style={styles.text}>{item.name}</Text>
+                <Text style={styles.playerDetails}>Goals: {item.goals}</Text>
+                <Text style={styles.playerDetails}>Assists: {item.assists}</Text>
+                <Text style={styles.playerDetails}>Rating: {item.ratingAve}</Text>
+              </View>
+            )}
           />
         )}
 
         <Text style={styles.text}>Squad stats</Text>
-
-        <CardLayout headerText='Matches played:'>
-          {topMatchesPlayed && (showAllTopMatchesPlayed ? topMatchesPlayed : topMatchesPlayed?.slice(0, 5)).map((player) => (
-            <View style={styles.row} key={player.name}>
-              <Text style={styles.playerName}>{player.name}</Text>
-              <Text style={styles.playerStat}>{player.gamesPlayed}</Text>
-            </View>
-          ))}
-
-          {!showAllTopMatchesPlayed && topMatchesPlayed && topMatchesPlayed.length > 5 && (
-            <TouchableOpacity onPress={() => setShowAllTopMatchesPlayed(true)}>
-              <Text style={styles.viewMoreText}>View more</Text>
-            </TouchableOpacity>
-          )}
-        </CardLayout>
-
-        <CardLayout headerText='Most MOTM:'>
-          {topManOfTheMatch && (showAllTopManOfTheMatch ? topManOfTheMatch : topManOfTheMatch?.slice(0, 5)).map((player) => (
-            <View style={styles.row} key={player.name}>
-              <Text style={styles.playerName}>{player.name}</Text>
-              <Text style={styles.playerStat}>{player.manOfTheMatch}</Text>
-            </View>
-          ))}
-
-          {!showAllTopManOfTheMatch && topManOfTheMatch && topManOfTheMatch.length > 5 && (
-            <TouchableOpacity onPress={() => setShowAllTopManOfTheMatch(true)}>
-              <Text style={styles.viewMoreText}>View more</Text>
-            </TouchableOpacity>
-          )}
-        </CardLayout>
-
-        <CardLayout headerText='Top scorers:'>
-          {topScorers && (showAllTopScorers ? topScorers : topScorers?.slice(0, 5)).map((player) => (
-            <View style={styles.row} key={player.name}>
-              <Text style={styles.playerName}>{player.name}</Text>
-              <Text style={styles.playerStat}>{player.goals}</Text>
-            </View>
-          ))}
-
-          {!showAllTopScorers && topScorers && topScorers.length > 5 && (
-            <TouchableOpacity onPress={() => setShowAllTopScorers(true)}>
-              <Text style={styles.viewMoreText}>View more</Text>
-            </TouchableOpacity>
-          )}
-        </CardLayout>
-
-        <CardLayout headerText='Most assists:'>
-          {topAssists && (showAllTopAssists ? topAssists : topAssists?.slice(0, 5)).map((player) => (
-            <View style={styles.row} key={player.name}>
-              <Text style={styles.playerName}>{player.name}</Text>
-              <Text style={styles.playerStat}>{player.assists}</Text>
-            </View>
-          ))}
-
-          {!showAllTopAssists && topAssists && topAssists.length > 5 && (
-            <TouchableOpacity onPress={() => setShowAllTopAssists(true)}>
-              <Text style={styles.viewMoreText}>View more</Text>
-            </TouchableOpacity>
-          )}
-        </CardLayout>
-
-        <CardLayout headerText='Goals + assists:'>
-          {topGoalsAndAssists && (showAllTopGoalsAndAssists ? topGoalsAndAssists : topGoalsAndAssists?.slice(0, 5)).map((player) => (
-            <View style={styles.row} key={player.name}>
-              <Text style={styles.playerName}>{player.name}</Text>
-              <Text style={styles.playerStat}>{parseInt(player.goals) + parseInt(player.assists)}</Text>
-            </View>
-          ))}
-
-          {!showAllTopGoalsAndAssists && topGoalsAndAssists && topGoalsAndAssists.length > 5 && (
-            <TouchableOpacity onPress={() => setShowAllTopGoalsAndAssists(true)}>
-              <Text style={styles.viewMoreText}>View more</Text>
-            </TouchableOpacity>
-          )}
-        </CardLayout>
-
-        <CardLayout headerText='Average rating:'>
-          {topAverageRating && (showAllTopRatings ? topAverageRating : topAverageRating?.slice(0, 5)).map((player) => (
-            <View style={styles.row} key={player.name}>
-              <Text style={styles.playerName}>{player.name}</Text>
-              <Text style={styles.playerStat}>{player.ratingAve}</Text>
-            </View>
-          ))}
-
-          {!showAllTopRatings && topAverageRating && topAverageRating.length > 5 && (
-            <TouchableOpacity onPress={() => setShowAllTopRatings(true)}>
-              <Text style={styles.viewMoreText}>View more</Text>
-            </TouchableOpacity>
-          )}
-        </CardLayout>
-
-        <CardLayout headerText='Passes per match:'>
-          {topPassesPerMatch && (showAllTopPassesPerMatch ? topPassesPerMatch : topPassesPerMatch?.slice(0, 5)).map((player) => (
-            <View style={styles.row} key={player.name}>
-              <Text style={styles.playerName}>{player.name}</Text>
-              <Text style={styles.playerStat}>{(parseInt(player.passesMade) / parseInt(player.gamesPlayed)).toFixed(2)}</Text>
-            </View>
-          ))}
-
-          {!showAllTopPassesPerMatch && topPassesPerMatch && topPassesPerMatch.length > 5 && (
-            <TouchableOpacity onPress={() => setShowAllTopPassesPerMatch(true)}>
-              <Text style={styles.viewMoreText}>View more</Text>
-            </TouchableOpacity>
-          )}
-        </CardLayout>
-
-        <CardLayout headerText='Pass success rate:'>
-          {topPassSuccessRate && (showAllTopPassSuccessRate ? topPassSuccessRate : topPassSuccessRate?.slice(0, 5)).map((player) => (
-            <View style={styles.row} key={player.name}>
-              <Text style={styles.playerName}>{player.name}</Text>
-              <Text style={styles.playerStat}>{player.passSuccessRate} %</Text>
-            </View>
-          ))}
-
-          {!showAllTopPassSuccessRate && topPassSuccessRate && topPassSuccessRate.length > 5 && (
-            <TouchableOpacity onPress={() => setShowAllTopPassSuccessRate(true)}>
-              <Text style={styles.viewMoreText}>View more</Text>
-            </TouchableOpacity>
-          )}
-        </CardLayout>
-
-        <CardLayout headerText='Tackles per match:'>
-          {topTacklesPerMatch && (showAllTopTacklesPerMatch ? topTacklesPerMatch : topTacklesPerMatch?.slice(0, 5)).map((player) => (
-            <View style={styles.row} key={player.name}>
-              <Text style={styles.playerName}>{player.name}</Text>
-              <Text style={styles.playerStat}>{(parseInt(player.tacklesMade) / parseInt(player.gamesPlayed)).toFixed(2)}</Text>
-            </View>
-          ))}
-
-          {!showAllTopTacklesPerMatch && topTacklesPerMatch && topTacklesPerMatch.length > 5 && (
-            <TouchableOpacity onPress={() => setShowAllTopTacklesPerMatch(true)}>
-              <Text style={styles.viewMoreText}>View more</Text>
-            </TouchableOpacity>
-          )}
-        </CardLayout>
-
-        <CardLayout headerText='Tackle success rate:'>
-          {topTackleSuccessRate && (showAllTopTackleSuccessRate ? topTackleSuccessRate : topTackleSuccessRate?.slice(0, 5)).map((player) => (
-            <View style={styles.row} key={player.name}>
-              <Text style={styles.playerName}>{player.name}</Text>
-              <Text style={styles.playerStat}>{player.tackleSuccessRate} %</Text>
-            </View>
-          ))}
-
-          {!showAllTopTackleSuccessRate && topTackleSuccessRate && topTackleSuccessRate.length > 5 && (
-            <TouchableOpacity onPress={() => setShowAllTopTackleSuccessRate(true)}>
-              <Text style={styles.viewMoreText}>View more</Text>
-            </TouchableOpacity>
-          )}
-        </CardLayout>
-
-        <CardLayout headerText='Defensive clean sheets:'>
-          {topDefensiveCleanSheets && (showAllTopDefensiveCleanSheets ? topDefensiveCleanSheets : topDefensiveCleanSheets?.slice(0, 5)).map((player) => (
-            <View style={styles.row} key={player.name}>
-              <Text style={styles.playerName}>{player.name}</Text>
-              <Text style={styles.playerStat}>{player.cleanSheetsDef}</Text>
-            </View>
-          ))}
-
-          {!showAllTopDefensiveCleanSheets && topDefensiveCleanSheets && topDefensiveCleanSheets.length > 5 && (
-            <TouchableOpacity onPress={() => setShowAllTopDefensiveCleanSheets(true)}>
-              <Text style={styles.viewMoreText}>View more</Text>
-            </TouchableOpacity>
-          )}
-        </CardLayout>
-        
+        <StatSection headerText={'Matches played:'} statKey={'topMatchesPlayed'} data={sortedStats.topMatchesPlayed} renderValue={(player) => player.gamesPlayed} />
+        <StatSection headerText={'Most MOTM:'} statKey={'topManOfTheMatch'} data={sortedStats.topManOfTheMatch} renderValue={(player) => player.manOfTheMatch} />
+        <StatSection headerText={'Top scorers:'} statKey={'topScorers'} data={sortedStats.topScorers} renderValue={(player) => player.goals} />
+        <StatSection headerText={'Most assists:'} statKey={'topAssists'} data={sortedStats.topAssists} renderValue={(player) => player.assists} />
+        <StatSection headerText={'Goals + assists:'} statKey={'topGoalsAndAssists'} data={sortedStats.topGoalsAndAssists} renderValue={(player) => parseInt(player.goals) + parseInt(player.assists)} />
+        <StatSection headerText={'Average rating:'} statKey={'topAverageRating'} data={sortedStats.topAverageRating} renderValue={(player) => player.ratingAve} />
+        <StatSection headerText={'Passes per match:'} statKey={'topPassesPerMatch'} data={sortedStats.topPassesPerMatch} renderValue={(player) => (parseInt(player.passesMade) / parseInt(player.gamesPlayed)).toFixed(2)} />
+        <StatSection headerText={'Pass success rate:'} statKey={'topPassSuccessRate'} data={sortedStats.topPassSuccessRate} renderValue={(player) => `${player.passSuccessRate} %`} />
+        <StatSection headerText={'Tackles per match:'} statKey={'topAssists'} data={sortedStats.topTacklesPerMatch} renderValue={(player) => (parseInt(player.tacklesMade) / parseInt(player.gamesPlayed)).toFixed(2)} />
+        <StatSection headerText={'Tackle success rate:'} statKey={'topTackleSuccessRate'} data={sortedStats.topTackleSuccessRate} renderValue={(player) => `${player.tackleSuccessRate} %`} />
+        <StatSection headerText={'Defensive clean sheets:'} statKey={'topDefensiveCleanSheets'} data={sortedStats.topDefensiveCleanSheets} renderValue={(player) => player.cleanSheetsDef} />
       </ScrollView> 
     </View>
   );
@@ -307,13 +109,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#ffffff',
   },
-  viewMoreText: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    textDecorationLine: 'none',
-    color: '#ffffff',
-    marginTop: 8,
-  },
   carouselItem: {
     backgroundColor: '#1c1c1e',
     borderRadius: 8,
@@ -327,20 +122,5 @@ const styles = StyleSheet.create({
   playerDetails: {
     fontSize: 16,
     color: '#ffffff',
-  },
-  playerName: {
-    fontSize: 16,
-    color: '#ffffff',
-    flex: 1,
-  },
-  playerStat: {
-    fontSize: 16,
-    color: '#ffffff',
-    textAlign: 'right',
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 4,
   },
 });
