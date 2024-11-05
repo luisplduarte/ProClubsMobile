@@ -24,7 +24,8 @@ const styles = StyleSheet.create({
         padding: 8,
         borderWidth: 1,
         borderRadius: 8,
-        borderColor: '#ffffff'
+        borderColor: '#ffffff',
+        marginBottom: 8,
     },
     chartHeaderText: {
         fontSize: 20,

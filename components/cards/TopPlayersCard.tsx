@@ -39,8 +39,6 @@ export default function TopPlayersCard() {
     .sort((a: Player, b: Player) => parseFloat(b.ratingAve) - parseFloat(a.ratingAve))
     .slice(0, 3);
 
-    console.log("topAverageRating = ", topAverageRating)
-
   return (
     <CardLayout headerText='Players:'>
         <Text style={styles.chartLabel}>Top scorers:</Text>
