@@ -67,7 +67,7 @@ export default function TopPlayersCard() {
         ))}
 
         <Link>
-            <LinkText style={styles.linkText} onPress={() => router.replace('/squad')}>View more</LinkText>
+            <LinkText style={styles.linkText} onPress={() => router.replace('/clubLeaderboards')}>View more</LinkText>
         </Link>
     </CardLayout>
   )

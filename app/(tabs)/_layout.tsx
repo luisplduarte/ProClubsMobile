@@ -38,6 +38,15 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="clubLeaderboards"
+        options={{
+          title: 'Leaderboards',
+          tabBarIcon: ({ color }) => (
+            <FontAwesome name={'table'} color={color} size={24}/>
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="squad"
         options={{
           title: 'Squad',
@@ -47,5 +56,6 @@ export default function TabLayout() {
         }}
       />
     </Tabs>
+
   );
 }

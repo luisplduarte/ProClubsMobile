@@ -1,8 +1,6 @@
 import { View, StyleSheet, Text, ActivityIndicator, ScrollView } from 'react-native';
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Box } from "@/components/ui/box"
-import { HStack } from "@/components/ui/hstack"
 import { VStack } from '@/components/ui/vstack';
 import { fetchClubInfo } from '../../api/clubService';
 import { ClubInfo as ClubInfoType } from '../../types/ClubInfoTypes';
@@ -89,26 +87,5 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     paddingBottom: 16,
     textAlign: 'center',
-  },
-  headerText: {
-    fontSize: 40,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    paddingBottom: 24,
-  },
-  chartLabel: {
-    fontSize: 16,
-    color: '#ffffff',
-    marginBottom: 8,
-  },
-  barContainer: {
-    flexDirection: 'row',
-    height: 20,
-    width: '100%',
-    borderRadius: 4,
-    overflow: 'hidden',
-  },
-  barSegment: {
-    height: '100%',
   },
 });
