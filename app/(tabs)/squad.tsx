@@ -1,20 +1,24 @@
 import { View, StyleSheet, Text, ActivityIndicator, Dimensions, ScrollView } from 'react-native';
 import React from 'react';
-import Carousel from 'react-native-reanimated-carousel';
 import { useQuery } from '@tanstack/react-query';
 import { fetchClubPlayers } from '../../api/clubService';
-import { ClubPlayersInfo, Player } from '@/types/PlayerTypes';
-import StatSection from '@/components/StatSection';
+import { ClubPlayersInfo } from '@/types/PlayerTypes';
+import { VStack } from '@/components/ui/vstack';
+import CardLayout from '@/components/cards/CardLayout';
 
 const { width: screenWidth } = Dimensions.get('window');
 
-export default function Squad() { 
+export default function Squad() {
   const { data: clubPlayers, isLoading, error } = useQuery<ClubPlayersInfo, Error>(
     {
       queryKey: ['clubPlayers'],
       queryFn: () => fetchClubPlayers()
     }
   );
+
+  const handleSelect = (value: string) => {
+    console.log("Selected player:", value);
+  };
     
   if (isLoading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
@@ -28,55 +32,92 @@ export default function Squad() {
     );
   }
 
-  const sortedStats = {
-    topMatchesPlayed: clubPlayers?.members.slice().sort((a, b) => parseInt(b.gamesPlayed) - parseInt(a.gamesPlayed)) || [],
-    topManOfTheMatch: clubPlayers?.members.slice().sort((a, b) => parseInt(b.manOfTheMatch) - parseInt(a.manOfTheMatch)) || [],
-    topScorers: clubPlayers?.members.slice().sort((a, b) => parseInt(b.goals) - parseInt(a.goals)) || [],
-    topAssists: clubPlayers?.members.slice().sort((a, b) => parseInt(b.assists) - parseInt(a.assists)) || [],
-    topGoalsAndAssists: clubPlayers?.members.slice().sort((a, b) => (parseInt(b.goals) + parseInt(b.assists)) - (parseInt(a.goals) + parseInt(a.assists))) || [],
-    topAverageRating: clubPlayers?.members.slice().sort((a, b) => parseFloat(b.ratingAve) - parseFloat(a.ratingAve)) || [],
-    topPassesPerMatch: clubPlayers?.members.slice().sort((a, b) => (parseInt(b.passesMade) / parseInt(b.gamesPlayed)) - (parseInt(a.passesMade) / parseInt(a.gamesPlayed))) || [],
-    topPassSuccessRate: clubPlayers?.members.slice().sort((a, b) => parseFloat(b.passSuccessRate) - parseFloat(a.passSuccessRate)) || [],
-    topTacklesPerMatch: clubPlayers?.members.slice().sort((a, b) => (parseInt(b.tacklesMade) / parseInt(b.gamesPlayed)) - (parseInt(a.tacklesMade) / parseInt(a.gamesPlayed))) || [],
-    topTackleSuccessRate: clubPlayers?.members.slice().sort((a, b) => parseInt(b.tackleSuccessRate) - parseInt(a.tackleSuccessRate)) || [],
-    topDefensiveCleanSheets: clubPlayers?.members.slice().sort((a, b) => parseInt(b.cleanSheetsDef) - parseInt(a.cleanSheetsDef)) || [],
-  };
+  const forwards = clubPlayers?.members.filter((player) => player.favoritePosition === 'forward' ) || [];
+  const midfielders = clubPlayers?.members.filter((player) => player.favoritePosition === 'midfielder' ) || [];
+  const defenders = clubPlayers?.members.filter((player) => player.favoritePosition === 'defender' ) || [];
+  const goalkeepers = clubPlayers?.members.filter((player) => player.favoritePosition === 'goalkeeper' ) || [];
 
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-        <Text style={styles.text}>Squad</Text>
-        {clubPlayers && (
-          <Carousel
-            loop
-            width={screenWidth * 0.85}
-            height={180}
-            mode="parallax"
-            data={clubPlayers.members}
-            scrollAnimationDuration={1000}
-            renderItem={({ item }: { item: Player }) => (
-              <View style={styles.carouselItem}>
-                <Text style={styles.text}>{item.name}</Text>
-                <Text style={styles.playerDetails}>Goals: {item.goals}</Text>
-                <Text style={styles.playerDetails}>Assists: {item.assists}</Text>
-                <Text style={styles.playerDetails}>Rating: {item.ratingAve}</Text>
-              </View>
-            )}
-          />
-        )}
+        <Text style={styles.text}>Squad list</Text>
+        <VStack>
+          <Text style={styles.text}>Forwards ({clubPlayers?.positionCount.forward})</Text>
+          <View style={styles.wrapContainer}>
+            {forwards.length ? 
+                forwards.map((player) => {
+                    return (
+                        <CardLayout style={styles.card}>
+                            <View>
+                                <Text style={styles.text}>{player.name}</Text>
+                                <Text style={styles.playerDetails}>Goals: {player.goals}</Text>
+                                <Text style={styles.playerDetails}>Assists: {player.assists}</Text>
+                                <Text style={styles.playerDetails}>Average rating: {player.ratingAve}</Text>
+                            </View>
+                        </CardLayout>
+                    )
+                }) : 
+                <Text style={styles.playerDetails}>No forwards in the club</Text>
+            }
+          </View>
 
-        <Text style={styles.text}>Squad stats</Text>
-        <StatSection headerText={'Matches played:'} statKey={'topMatchesPlayed'} data={sortedStats.topMatchesPlayed} renderValue={(player) => player.gamesPlayed} />
-        <StatSection headerText={'Most MOTM:'} statKey={'topManOfTheMatch'} data={sortedStats.topManOfTheMatch} renderValue={(player) => player.manOfTheMatch} />
-        <StatSection headerText={'Top scorers:'} statKey={'topScorers'} data={sortedStats.topScorers} renderValue={(player) => player.goals} />
-        <StatSection headerText={'Most assists:'} statKey={'topAssists'} data={sortedStats.topAssists} renderValue={(player) => player.assists} />
-        <StatSection headerText={'Goals + assists:'} statKey={'topGoalsAndAssists'} data={sortedStats.topGoalsAndAssists} renderValue={(player) => parseInt(player.goals) + parseInt(player.assists)} />
-        <StatSection headerText={'Average rating:'} statKey={'topAverageRating'} data={sortedStats.topAverageRating} renderValue={(player) => player.ratingAve} />
-        <StatSection headerText={'Passes per match:'} statKey={'topPassesPerMatch'} data={sortedStats.topPassesPerMatch} renderValue={(player) => (parseInt(player.passesMade) / parseInt(player.gamesPlayed)).toFixed(2)} />
-        <StatSection headerText={'Pass success rate:'} statKey={'topPassSuccessRate'} data={sortedStats.topPassSuccessRate} renderValue={(player) => `${player.passSuccessRate} %`} />
-        <StatSection headerText={'Tackles per match:'} statKey={'topAssists'} data={sortedStats.topTacklesPerMatch} renderValue={(player) => (parseInt(player.tacklesMade) / parseInt(player.gamesPlayed)).toFixed(2)} />
-        <StatSection headerText={'Tackle success rate:'} statKey={'topTackleSuccessRate'} data={sortedStats.topTackleSuccessRate} renderValue={(player) => `${player.tackleSuccessRate} %`} />
-        <StatSection headerText={'Defensive clean sheets:'} statKey={'topDefensiveCleanSheets'} data={sortedStats.topDefensiveCleanSheets} renderValue={(player) => player.cleanSheetsDef} />
+          <Text style={styles.text}>Midfielders ({clubPlayers?.positionCount.midfielder})</Text>
+          <View style={styles.wrapContainer}>
+            {midfielders.length ? 
+                midfielders.map((player) => {
+                    return (
+                        <CardLayout style={styles.card}>
+                            <View>
+                                <Text style={styles.text}>{player.name}</Text>
+                                <Text style={styles.playerDetails}>Goals: {player.goals}</Text>
+                                <Text style={styles.playerDetails}>Assists: {player.assists}</Text>
+                                <Text style={styles.playerDetails}>Average rating: {player.ratingAve}</Text>
+                            </View>
+                        </CardLayout>
+                    )
+                }) : 
+                <Text style={styles.playerDetails}>No midfielders in the club</Text>
+            }
+          </View>
+
+          <Text style={styles.text}>Defenders ({clubPlayers?.positionCount.defender})</Text>
+          <View style={styles.wrapContainer}>
+            {defenders.length ? 
+                defenders.map((player) => {
+                    return (
+                        <CardLayout style={styles.card}>
+                            <View>
+                                <Text style={styles.text}>{player.name}</Text>
+                                <Text style={styles.playerDetails}>Goals: {player.goals}</Text>
+                                <Text style={styles.playerDetails}>Assists: {player.assists}</Text>
+                                <Text style={styles.playerDetails}>Average rating: {player.ratingAve}</Text>
+                            </View>
+                        </CardLayout>
+                    )
+                }) : 
+                <Text style={styles.playerDetails}>No defenders in the club</Text>
+            }
+          </View>
+
+          <Text style={styles.text}>Goalkeepers ({clubPlayers?.positionCount.goalkeeper})</Text>
+          <View style={styles.wrapContainer}>
+            {goalkeepers.length ? 
+                goalkeepers.map((player) => {
+                    return (
+                        <CardLayout style={styles.card}>
+                            <View>
+                                <Text style={styles.text}>{player.name}</Text>
+                                <Text style={styles.playerDetails}>Goals: {player.goals}</Text>
+                                <Text style={styles.playerDetails}>Assists: {player.assists}</Text>
+                                <Text style={styles.playerDetails}>Average rating: {player.ratingAve}</Text>
+                            </View>
+                        </CardLayout>
+                    )
+                }) : 
+                <Text style={styles.playerDetails}>No goalkeepers in the club</Text>
+            }
+          </View>
+        </VStack>
       </ScrollView> 
     </View>
   );
@@ -97,9 +138,6 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
     alignItems: 'center',
   },
-  card: {
-    marginBottom: 16,
-  },
   errorText: {
     color: 'red',
     fontSize: 18,
@@ -108,19 +146,37 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#ffffff',
+    textAlign: 'center',
+    marginBottom: 8,
   },
-  carouselItem: {
-    backgroundColor: '#1c1c1e',
-    borderRadius: 8,
-    padding: 0,
+  playerName: {
+    fontSize: 16,
+    color: '#ffffff',
     flex: 1,
-    width: screenWidth * 0.80,
-    marginHorizontal: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+  },
+  playerStat: {
+    fontSize: 16,
+    color: '#ffffff',
+    textAlign: 'right',
   },
   playerDetails: {
     fontSize: 16,
     color: '#ffffff',
+  },
+  wrapContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    // justifyContent: 'flex-start',    //If I use this, then there's no margin to the left of the screen
+    gap: 8,
+  },
+  card: {
+    width: screenWidth / 2 - 16,
+    backgroundColor: '#646466',
+    padding: 8,
+    borderWidth: 1,
+    borderRadius: 8,
+    borderColor: '#ffffff',
+    marginBottom: 8,
   },
 });
