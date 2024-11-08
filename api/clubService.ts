@@ -5,6 +5,11 @@ export const fetchClubInfo = async (clubId: string = '158176') => {
     return response.data;
 };
 
+export const fetchClubByName = async (clubName: string) => {
+    const response = await api.get(`/clubs/name/${clubName}`);
+    return response.data;
+};
+
 export const fetchClubPlayers = async (clubId: string = '158176') => {
     const response = await api.get(`/clubs/${clubId}/players`);
     return response.data;
