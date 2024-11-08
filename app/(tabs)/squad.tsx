@@ -1,5 +1,6 @@
 import { View, StyleSheet, Text, ActivityIndicator, Dimensions, ScrollView } from 'react-native';
 import React from 'react';
+import { useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { fetchClubPlayers } from '../../api/clubService';
 import { ClubPlayersInfo } from '@/types/PlayerTypes';
@@ -9,6 +10,7 @@ import CardLayout from '@/components/cards/CardLayout';
 const { width: screenWidth } = Dimensions.get('window');
 
 export default function Squad() {
+  const router = useRouter();
   const { data: clubPlayers, isLoading, error } = useQuery<ClubPlayersInfo, Error>(
     {
       queryKey: ['clubPlayers'],
@@ -16,10 +18,6 @@ export default function Squad() {
     }
   );
 
-  const handleSelect = (value: string) => {
-    console.log("Selected player:", value);
-  };
-    
   if (isLoading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
@@ -30,6 +28,10 @@ export default function Squad() {
         <Text style={styles.errorText}>Data unavailable.</Text>
       </View>
     );
+  }
+
+  const onPlayerClicked = (playerName: string) => {
+    router.push(`/playerDetails?name=${playerName}`);
   }
 
   const forwards = clubPlayers?.members.filter((player) => player.favoritePosition === 'forward' ) || [];
@@ -45,76 +47,76 @@ export default function Squad() {
           <Text style={styles.text}>Forwards ({clubPlayers?.positionCount.forward})</Text>
           <View style={styles.wrapContainer}>
             {forwards.length ? 
-                forwards.map((player) => {
-                    return (
-                        <CardLayout style={styles.card}>
-                            <View>
-                                <Text style={styles.text}>{player.name}</Text>
-                                <Text style={styles.playerDetails}>Goals: {player.goals}</Text>
-                                <Text style={styles.playerDetails}>Assists: {player.assists}</Text>
-                                <Text style={styles.playerDetails}>Average rating: {player.ratingAve}</Text>
-                            </View>
-                        </CardLayout>
-                    )
-                }) : 
-                <Text style={styles.playerDetails}>No forwards in the club</Text>
+              forwards.map((player) => {
+                  return (
+                    <CardLayout style={styles.card} onClick={() => onPlayerClicked(player.name)}>
+                      <View>
+                        <Text style={styles.text}>{player.name}</Text>
+                        <Text style={styles.playerDetails}>Goals: {player.goals}</Text>
+                        <Text style={styles.playerDetails}>Assists: {player.assists}</Text>
+                        <Text style={styles.playerDetails}>Average rating: {player.ratingAve}</Text>
+                      </View>
+                    </CardLayout>
+                  )
+              }) : 
+              <Text style={styles.playerDetails}>No forwards in the club</Text>
             }
           </View>
 
           <Text style={styles.text}>Midfielders ({clubPlayers?.positionCount.midfielder})</Text>
           <View style={styles.wrapContainer}>
             {midfielders.length ? 
-                midfielders.map((player) => {
-                    return (
-                        <CardLayout style={styles.card}>
-                            <View>
-                                <Text style={styles.text}>{player.name}</Text>
-                                <Text style={styles.playerDetails}>Goals: {player.goals}</Text>
-                                <Text style={styles.playerDetails}>Assists: {player.assists}</Text>
-                                <Text style={styles.playerDetails}>Average rating: {player.ratingAve}</Text>
-                            </View>
-                        </CardLayout>
-                    )
-                }) : 
-                <Text style={styles.playerDetails}>No midfielders in the club</Text>
+              midfielders.map((player) => {
+                return (
+                  <CardLayout style={styles.card} onClick={() => onPlayerClicked(player.name)}>
+                    <View>
+                      <Text style={styles.text}>{player.name}</Text>
+                      <Text style={styles.playerDetails}>Goals: {player.goals}</Text>
+                      <Text style={styles.playerDetails}>Assists: {player.assists}</Text>
+                      <Text style={styles.playerDetails}>Average rating: {player.ratingAve}</Text>
+                    </View>
+                  </CardLayout>
+                )
+              }) : 
+              <Text style={styles.playerDetails}>No midfielders in the club</Text>
             }
           </View>
 
           <Text style={styles.text}>Defenders ({clubPlayers?.positionCount.defender})</Text>
           <View style={styles.wrapContainer}>
             {defenders.length ? 
-                defenders.map((player) => {
-                    return (
-                        <CardLayout style={styles.card}>
-                            <View>
-                                <Text style={styles.text}>{player.name}</Text>
-                                <Text style={styles.playerDetails}>Goals: {player.goals}</Text>
-                                <Text style={styles.playerDetails}>Assists: {player.assists}</Text>
-                                <Text style={styles.playerDetails}>Average rating: {player.ratingAve}</Text>
-                            </View>
-                        </CardLayout>
-                    )
-                }) : 
-                <Text style={styles.playerDetails}>No defenders in the club</Text>
+              defenders.map((player) => {
+                return (
+                  <CardLayout style={styles.card} onClick={() => onPlayerClicked(player.name)}>
+                    <View>
+                      <Text style={styles.text}>{player.name}</Text>
+                      <Text style={styles.playerDetails}>Goals: {player.goals}</Text>
+                      <Text style={styles.playerDetails}>Assists: {player.assists}</Text>
+                      <Text style={styles.playerDetails}>Average rating: {player.ratingAve}</Text>
+                    </View>
+                  </CardLayout>
+                )
+              }) : 
+              <Text style={styles.playerDetails}>No defenders in the club</Text>
             }
           </View>
 
           <Text style={styles.text}>Goalkeepers ({clubPlayers?.positionCount.goalkeeper})</Text>
           <View style={styles.wrapContainer}>
             {goalkeepers.length ? 
-                goalkeepers.map((player) => {
-                    return (
-                        <CardLayout style={styles.card}>
-                            <View>
-                                <Text style={styles.text}>{player.name}</Text>
-                                <Text style={styles.playerDetails}>Goals: {player.goals}</Text>
-                                <Text style={styles.playerDetails}>Assists: {player.assists}</Text>
-                                <Text style={styles.playerDetails}>Average rating: {player.ratingAve}</Text>
-                            </View>
-                        </CardLayout>
-                    )
-                }) : 
-                <Text style={styles.playerDetails}>No goalkeepers in the club</Text>
+              goalkeepers.map((player) => {
+                return (
+                  <CardLayout style={styles.card} onClick={() => onPlayerClicked(player.name)}>
+                    <View>
+                      <Text style={styles.text}>{player.name}</Text>
+                      <Text style={styles.playerDetails}>Goals: {player.goals}</Text>
+                      <Text style={styles.playerDetails}>Assists: {player.assists}</Text>
+                      <Text style={styles.playerDetails}>Average rating: {player.ratingAve}</Text>
+                    </View>
+                  </CardLayout>
+                )
+              }) : 
+              <Text style={styles.playerDetails}>No goalkeepers in the club</Text>
             }
           </View>
         </VStack>
@@ -148,16 +150,6 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     textAlign: 'center',
     marginBottom: 8,
-  },
-  playerName: {
-    fontSize: 16,
-    color: '#ffffff',
-    flex: 1,
-  },
-  playerStat: {
-    fontSize: 16,
-    color: '#ffffff',
-    textAlign: 'right',
   },
   playerDetails: {
     fontSize: 16,

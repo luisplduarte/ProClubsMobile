@@ -1,19 +1,22 @@
-import { View, StyleSheet, Text, ActivityIndicator, ScrollView } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { ReactNode } from 'react';
 import { Box } from "@/components/ui/box"
 
 type Props = {
     headerText?: string;
     style?: object;
+    onClick?: () => void;
     children: ReactNode;
 };
 
-export default function CardLayout({ children, headerText, style }: Props) {
+export default function CardLayout({ children, headerText, style, onClick }: Props) {
   return (
-    <Box style={style || styles.chartContainer}>
-      {headerText && <Text style={styles.chartHeaderText}>{headerText}</Text>}
-      {children}
-    </Box>
+    <TouchableOpacity onPress={onClick} disabled={!onClick}>
+      <Box style={style || styles.chartContainer}>
+        {headerText && <Text style={styles.chartHeaderText}>{headerText}</Text>}
+        {children}
+      </Box>
+    </TouchableOpacity>
   )
 }
 
