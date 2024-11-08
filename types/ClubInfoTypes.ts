@@ -1,4 +1,12 @@
-// TODO: return fields that are of time numbers as numbers from the API and then change the types here also
+// TODO: return fields that are of type numbers as numbers from the API and then change the types here also
+
+export interface SimplifiedClubInfo {
+  clubId: string,
+  name: string,
+  regionId: number,
+  teamId: number,
+  platform: string
+}
 
 export interface ClubInfo {
   id: string;

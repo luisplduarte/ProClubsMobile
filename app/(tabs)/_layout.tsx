@@ -55,6 +55,15 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="clubs"
+        options={{
+          title: 'Search clubs',
+          tabBarIcon: ({ color }) => (
+            <FontAwesome name={'search'} color={color} size={24}/>
+          ),
+        }}
+      />
     </Tabs>
 
   );
