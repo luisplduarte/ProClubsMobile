@@ -43,80 +43,45 @@ export default function ClubDetails() {
             <VStack space="lg" style={styles.vStackContainer}>
               <CardLayout>
                 <View style={styles.row}>
+                  <Text style={styles.playerDetails}>Skill rating:</Text>
+                  <Text style={styles.playerStat}>{clubInfo.skillRating}</Text>
+                </View>
+                <View style={styles.row}>
                   <Text style={styles.playerDetails}>Games played:</Text>
                   <Text style={styles.playerStat}>{clubInfo.gamesPlayed}</Text>
                 </View>
                 <View style={styles.row}>
-                  <Text style={styles.playerDetails}>Favorite position:</Text>
-                  <Text style={styles.playerStat}>{}</Text>
+                  <Text style={styles.playerDetails}>League games:</Text>
+                  <Text style={styles.playerStat}>{clubInfo.leagueAppearances}</Text>
                 </View>
                 <View style={styles.row}>
-                  <Text style={styles.playerDetails}>Overall:</Text>
-                  <Text style={styles.playerStat}>{}</Text>
+                  <Text style={styles.playerDetails}>Playoff games:</Text>
+                  <Text style={styles.playerStat}>{clubInfo.gamesPlayedPlayoff}</Text>
                 </View>
                 <View style={styles.row}>
-                  {/* TODO: map nationality number to country */}
-                  <Text style={styles.playerDetails}>Nationality:</Text>
-                  <Text style={styles.playerStat}>{}</Text>
+                  <Text style={styles.playerDetails}>Wins:</Text>
+                  <Text style={styles.playerStat}>{clubInfo.wins}</Text>
                 </View>
                 <View style={styles.row}>
-                  {/* TODO: map height in cms string to meters and cms */}
-                  <Text style={styles.playerDetails}>Player height:</Text>
-                  <Text style={styles.playerStat}>{}</Text>
+                  <Text style={styles.playerDetails}>Draws:</Text>
+                  <Text style={styles.playerStat}>{clubInfo.ties}</Text>
                 </View>
                 <View style={styles.row}>
-                  <Text style={styles.playerDetails}>Games played:</Text>
-                  <Text style={styles.playerStat}>{}</Text>
+                  <Text style={styles.playerDetails}>Defeats:</Text>
+                  <Text style={styles.playerStat}>{clubInfo.losses}</Text>
                 </View>
                 <View style={styles.row}>
-                  <Text style={styles.playerDetails}>MOTM:</Text>
-                  <Text style={styles.playerStat}>{}</Text>
+                  <Text style={styles.playerDetails}>Win streak:</Text>
+                  <Text style={styles.playerStat}>{clubInfo.wins}</Text>
                 </View>
                 <View style={styles.row}>
-                  <Text style={styles.playerDetails}>Goals:</Text>
+                  <Text style={styles.playerDetails}>Goals scored:</Text>
                   <Text style={styles.playerStat}>{clubInfo.goals}</Text>
                 </View>
                 <View style={styles.row}>
-                  <Text style={styles.playerDetails}>Assists:</Text>
-                  <Text style={styles.playerStat}>{}</Text>
+                  <Text style={styles.playerDetails}>Goals conceded:</Text>
+                  <Text style={styles.playerStat}>{clubInfo.goalsAgainst}</Text>
                 </View>
-                {/* TODO: create goals + assists field in the backend */}
-                <View style={styles.row}>
-                  <Text style={styles.playerDetails}>Average rating:</Text>
-                  <Text style={styles.playerStat}>{}</Text>
-                </View>
-                <View style={styles.row}>
-                  <Text style={styles.playerDetails}>Shot success rate:</Text>
-                  <Text style={styles.playerStat}>{}</Text>
-                </View>
-                <View style={styles.row}>
-                  <Text style={styles.playerDetails}>Passes made:</Text>
-                  <Text style={styles.playerStat}>{}</Text>
-                </View>
-                <View style={styles.row}>
-                  <Text style={styles.playerDetails}>Pass success rate:</Text>
-                  <Text style={styles.playerStat}>{}</Text>
-                </View>
-                <View style={styles.row}>
-                  <Text style={styles.playerDetails}>Tackles made:</Text>
-                  <Text style={styles.playerStat}>{}</Text>
-                </View>
-                <View style={styles.row}>
-                  <Text style={styles.playerDetails}>Tackle success rate:</Text>
-                  <Text style={styles.playerStat}>{}</Text>
-                </View>
-                <View style={styles.row}>
-                  <Text style={styles.playerDetails}>Clean sheets as defender:</Text>
-                  <Text style={styles.playerStat}>{}</Text>
-                </View>
-                <View style={styles.row}>
-                  <Text style={styles.playerDetails}>Clean sheets as GK:</Text>
-                  <Text style={styles.playerStat}>{}</Text>
-                </View>
-                <View style={styles.row}>
-                  <Text style={styles.playerDetails}>Red cards:</Text>
-                  <Text style={styles.playerStat}>{}</Text>
-                </View>  
               </CardLayout>
             </VStack>
           </>
