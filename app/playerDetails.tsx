@@ -11,7 +11,7 @@ import CardLayout from '@/components/cards/CardLayout';
 export default function PlayerDetails() {
   const navigation = useNavigation();
   const params = useLocalSearchParams();
-  const playerName = Array.isArray(params.name) ? params.name[0] : params.name || '';
+  const playerName = Array.isArray(params.name) ? params.name[0] : params?.name || '';
   
   const { data: playerInfo, isLoading, error } = useQuery<Player, Error>(
     {
