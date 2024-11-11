@@ -17,6 +17,5 @@ export const fetchClubPlayers = async (clubId: string = '158176') => {
 
 export const fetchPlayerByName = async (playerName: string, clubId: string = '158176') => {
     const response = await api.get(`/clubs/${clubId}/players/${playerName}`);
-    console.log("Player = ", response.data)
     return response.data;
 };

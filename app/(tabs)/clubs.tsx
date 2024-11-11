@@ -28,22 +28,19 @@ export default function Clubs() {
     }
   );
 
-  console.log("clubs = ", clubs);
-
   // Clears form state when screen gains focus
   useFocusEffect(
     React.useCallback(() => {
       reset();
+      setInputText('');
     }, [reset])
   );
 
   const handleSearchClick: SubmitHandler<FormData> = (data) => {
     setInputText(data.searchInput);
-    console.log('Search icon clicked:', data.searchInput);
   };
 
   const handleClubClicked = (clubId: string) => {
-    console.log("club clicked -> ", clubId);
     router.push(`/clubDetails?id=${clubId}`);
   }
 
