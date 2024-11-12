@@ -6,7 +6,7 @@ import { useForm, Controller, FieldValues } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { Link, LinkText } from '@/components/ui/link';
 import { signUp } from '../api/authService';
-import { saveAccessToken } from '../utils/secureStore';
+import { saveUserData } from '../utils/secureStore';
 
 export default function SignUpScreen() {
   const router = useRouter();
@@ -17,14 +17,13 @@ export default function SignUpScreen() {
   const mutation = useMutation({
     mutationFn: async (data: FieldValues) => {
       const accessToken = await signUp(data.email, data.password);
-      await saveAccessToken(accessToken);
+      await saveUserData(accessToken, { email: data.email });
       return accessToken;
     },
     onSuccess: () => {
       router.replace('/');
     },
     onError: (err) => {
-      console.log("err = ", err);
       setError(err.toString());
     },
   });
