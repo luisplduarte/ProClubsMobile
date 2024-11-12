@@ -1,3 +1,4 @@
+import { ActivityIndicator } from 'react-native';
 import { Stack, useRouter } from "expo-router";
 import "@/global.css";
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
@@ -17,8 +18,8 @@ const queryClient = new QueryClient();
 // setTimeout(SplashScreen.hideAsync, 5000);
 
 export default function RootLayout() {
-  const user = useAuth();
   const router = useRouter();
+  const { user, isLoading } = useAuth();
   useNetwork();
 
   // Sets the status bar style when app loads
@@ -29,11 +30,12 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
-    if (!user) {
-      // TODO: remove the comment here after testing app
-      // router.replace('/login');
-    }
-  }, [user]);
+    if (!isLoading && !user) router.replace('/login');
+  }, [user, isLoading]);
+
+  if (isLoading) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
+  }
 
   return (
     <>

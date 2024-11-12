@@ -1,4 +1,3 @@
-// src/utils/secureStore.js
 import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
@@ -8,47 +7,51 @@ import { Platform } from 'react-native';
  */
 
 /**
- * Creates or updates the value with 'accessToken' key
- * @param token string with user's accessToken
+ * Creates or updates user's authentication data
+ * @param token string with user's access token
+ * @param userData object with user's information
  */
-export async function saveAccessToken(token: string) {
+export async function saveUserData(token: string, userData: object) {
   try {
+    const userPayload = JSON.stringify({ accessToken: token, userData });
     if (Platform.OS === 'web') {
-      return await AsyncStorage.setItem('accessToken', token);
-    } else { // mobile
-      return await SecureStore.setItemAsync('accessToken', token);
+      return await AsyncStorage.setItem('userSession', userPayload);
+    } else {
+      return await SecureStore.setItemAsync('userSession', userPayload);
     }
   } catch (error) {
-    console.error("Error saving data:", error); 
+    console.error("Error saving user data:", error);
   }
 }
 
 /**
- * Returns user's accessToken
+ * Returns user's authentication data
  */
-export async function getAccessToken() {
+export async function getUserData() {
   try {
+    let userPayload;
     if (Platform.OS === 'web') {
-      return await AsyncStorage.getItem('accessToken');
-    } else { // mobile
-      return await SecureStore.getItemAsync('accessToken');
+      userPayload = await AsyncStorage.getItem('userSession');
+    } else {
+      userPayload = await SecureStore.getItemAsync('userSession');
     }
+    return userPayload ? JSON.parse(userPayload) : null;
   } catch (error) {
-    console.error("Failed to fetch access token:", error);
+    console.error("Failed to fetch user data:", error);
   }
 }
 
 /**
- * Deletes user's accessToken from device local storage 
+ * Deletes user's authentication data from device local storage 
  */
-export async function deleteAccessToken() {
+export async function deleteUserData() {
   try {
     if (Platform.OS === 'web') {
-      await AsyncStorage.removeItem('accessToken');
-    } else { // mobile
-      await SecureStore.deleteItemAsync('accessToken');
+      await AsyncStorage.removeItem('userSession');
+    } else {
+      await SecureStore.deleteItemAsync('userSession');
     }
   } catch (error) {
-    console.error("Failed to delete access token:", error);
+    console.error("Failed to delete user data:", error);
   }
 }
