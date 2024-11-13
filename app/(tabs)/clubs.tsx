@@ -44,6 +44,10 @@ export default function Clubs() {
     router.push(`/clubDetails?id=${clubId}`);
   }
 
+  if (isLoading) return <Text style={styles.text}>Loading...</Text>
+
+  if (isError) return <Text style={styles.errorText}>Error fetching club data.</Text>
+
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
@@ -77,9 +81,6 @@ export default function Clubs() {
               {errors.searchInput && (
                 <Text style={styles.errorText}>{errors.searchInput.message}</Text>
               )}
-              
-              {isLoading && <Text style={styles.text}>Loading...</Text>}
-              {isError && <Text style={styles.errorText}>Error fetching club data.</Text>}
               {clubs && clubs.map((club) => {
                 return (
                     <CardLayout style={styles.card} onClick={() => handleClubClicked(club.clubId)} key={club.clubId}>

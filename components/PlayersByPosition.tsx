@@ -14,7 +14,7 @@ type Props = {
 export default function PlayersByPosition({ players, position, onPress }: Props) {
   return (
     <>
-        <Text style={styles.text}>{capitalizeFirstLetter(position)} ({players.length})</Text>
+        <Text style={styles.text}>{position} ({players.length})</Text>
         <View style={styles.wrapContainer}>
           {players.length ? 
             players.sort((a, b) => parseInt(b.gamesPlayed) - parseInt(a.gamesPlayed)).map((player) => {
@@ -38,31 +38,32 @@ export default function PlayersByPosition({ players, position, onPress }: Props)
 };
 
 const styles = StyleSheet.create({
-    wrapContainer: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        // justifyContent: 'flex-start',    //If I use this, then there's no margin to the left of the screen
-        gap: 8,
-    },
-    card: {
-        width: screenWidth / 2 - 16,
-        backgroundColor: '#646466',
-        padding: 8,
-        borderWidth: 1,
-        borderRadius: 8,
-        borderColor: '#ffffff',
-        marginBottom: 8,
-    },
-    text: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#ffffff',
-        textAlign: 'center',
-        marginBottom: 8,
-    },
-    playerDetails: {
-        fontSize: 16,
-        color: '#ffffff',
-    },
+  wrapContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    // justifyContent: 'flex-start',    //If I use this, then there's no margin to the left of the screen
+    gap: 8,
+  },
+  card: {
+    width: screenWidth / 2 - 16,
+    backgroundColor: '#646466',
+    padding: 8,
+    borderWidth: 1,
+    borderRadius: 8,
+    borderColor: '#ffffff',
+    marginBottom: 8,
+  },
+  text: {
+    "text-transform": "capitalize",
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  playerDetails: {
+    fontSize: 16,
+    color: '#ffffff',
+  },
 });
