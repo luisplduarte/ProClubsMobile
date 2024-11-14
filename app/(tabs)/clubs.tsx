@@ -1,9 +1,9 @@
 import { View, StyleSheet, Text, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
-import React, { useState } from 'react';
+import { useIsFocused } from '@react-navigation/native';
+import React, { useState, useEffect } from 'react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { useRouter } from "expo-router";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { useFocusEffect } from '@react-navigation/native';
 import { Input, InputField, InputIcon, InputSlot } from '@/components/ui/input';
 import { useQuery } from '@tanstack/react-query';
 import { fetchClubByName } from '../../api/clubService';
@@ -18,6 +18,7 @@ type FormData = {
 
 export default function Clubs() {
   const router = useRouter();
+  const isFocused = useIsFocused();
   const { control, handleSubmit, formState: { errors }, reset } = useForm<FormData>();
   const [inputText, setInputText] = useState('');
   const { data: clubs, isLoading, isError } = useQuery<[SimplifiedClubInfo], Error>(
@@ -28,13 +29,12 @@ export default function Clubs() {
     }
   );
 
-  // Clears form state when screen gains focus
-  useFocusEffect(
-    React.useCallback(() => {
+  useEffect(() => {
+    if (isFocused) {
       reset();
       setInputText('');
-    }, [reset])
-  );
+    }
+  }, [isFocused]);
 
   const handleSearchClick: SubmitHandler<FormData> = (data) => {
     setInputText(data.searchInput);
@@ -64,31 +64,32 @@ export default function Clubs() {
                 style={{ borderColor: '#ffffff', margin: 16 }}
               >
                 <InputField
-                    placeholder="Enter club name..."
-                    style={{ color: '#ffffff' }}
-                    onChangeText={(text) => {
-                      onChange(text);
-                    }}
-                    onBlur={onBlur}
-                    value={value}
+                  placeholder="Enter club name..."
+                  style={{ color: '#ffffff' }}
+                  onChangeText={(text) => {
+                    onChange(text);
+                  }}
+                  onBlur={onBlur}
+                  value={value}
                 />
                 <InputSlot>
-                    <TouchableOpacity onPress={handleSubmit(handleSearchClick)}>
-                    <InputIcon as={() => <FontAwesome name="search" size={20} color="#ffffff" style={{ padding: 16 }} />} />
-                    </TouchableOpacity>
+                  <TouchableOpacity onPress={handleSubmit(handleSearchClick)}>
+                  <InputIcon as={() => <FontAwesome name="search" size={20} color="#ffffff" style={{ padding: 16 }} />} />
+                  </TouchableOpacity>
                 </InputSlot>
               </Input>
+
               {errors.searchInput && (
                 <Text style={styles.errorText}>{errors.searchInput.message}</Text>
               )}
+
               {clubs && clubs.map((club) => {
                 return (
-                    <CardLayout style={styles.card} onClick={() => handleClubClicked(club.clubId)} key={club.clubId}>
-                        <View>
-                            <Text style={styles.text}>{club.name}</Text>
-                        </View>
-                    </CardLayout>
-              
+                  <CardLayout style={styles.card} onClick={() => handleClubClicked(club.clubId)} key={club.clubId}>
+                    <View>
+                      <Text style={styles.text}>{club.name}</Text>
+                    </View>
+                  </CardLayout>
                 )})
               }    
             </>
