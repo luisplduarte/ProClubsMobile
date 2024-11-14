@@ -29,12 +29,11 @@ export default function Clubs() {
   );
 
   // Clears form state when screen gains focus
-  useFocusEffect(
-    React.useCallback(() => {
-      reset();
-      setInputText('');
-    }, [reset])
-  );
+  //TODO: change this to a normal useEffect with clean up function
+  // useFocusEffect( () => {
+  //   reset();
+  //   setInputText('');
+  // }, [reset]);
 
   const handleSearchClick: SubmitHandler<FormData> = (data) => {
     setInputText(data.searchInput);
