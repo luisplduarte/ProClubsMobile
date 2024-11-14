@@ -12,7 +12,7 @@ export default function LogoutButton() {
       try {
         await logOut();
         await deleteUserData();
-        router.replace('/');
+        router.replace('/login');
       } catch (error) {
         return Toast.show('Logout failed.', {
           duration: Toast.durations.LONG,
