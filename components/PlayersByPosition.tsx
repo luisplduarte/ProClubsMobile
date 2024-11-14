@@ -14,7 +14,7 @@ type Props = {
 export default function PlayersByPosition({ players, position, onPress }: Props) {
   return (
     <>
-      <Text style={styles.text}>{capitalizeFirstLetter(position)} ({players.length})</Text>
+      <Text style={styles.text}>{position} ({players.length})</Text>
       <View style={styles.wrapContainer}>
         {players.length ? 
           players.sort((a, b) => parseInt(b.gamesPlayed) - parseInt(a.gamesPlayed)).map((player) => {
@@ -55,6 +55,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   text: {
+    "text-transform": "capitalize",
     fontSize: 20,
     fontWeight: 'bold',
     color: '#ffffff',
