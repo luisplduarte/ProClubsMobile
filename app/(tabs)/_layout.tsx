@@ -56,6 +56,15 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="favoriteClubs"
+        options={{
+          title: 'Favorites',
+          tabBarIcon: ({ color }) => (
+            <FontAwesome name={'heart'} color={color} size={24}/>
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="clubs"
         options={{
           title: 'Search clubs',
@@ -65,6 +74,5 @@ export default function TabLayout() {
         }}
       />
     </Tabs>
-
   );
 }

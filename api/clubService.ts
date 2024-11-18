@@ -1,8 +1,11 @@
 import api from '../utils/axiosConfig';
+import { checkIsFavorite } from './favoritesService';
 
 export const fetchClubInfo = async (clubId: string = '158176') => {
     const response = await api.get(`/clubs/${clubId}`);
-    return response.data;
+    const clubInfo = response.data;
+    clubInfo.isFavorite = await checkIsFavorite(clubInfo.id);
+    return clubInfo;
 };
 
 export const fetchClubByName = async (clubName: string) => {

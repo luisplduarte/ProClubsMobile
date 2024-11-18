@@ -1,22 +1,21 @@
 import { useEffect, useRef } from 'react';
 import NetInfo from "@react-native-community/netinfo";
 import { onlineManager } from "@tanstack/react-query";
-import Toast from 'react-native-toast-message';
+import CustomToast from '@/components/CustomToast';
+import { ToastTypes } from '@/types/ToastTypes';
 
 export const useNetwork = () => {
-  // Track initial connection state to avoid showing modal on app launch
-  const hasCheckedInitialConnection = useRef<boolean>(false);
+  const hasCheckedInitialConnection = useRef<boolean>(false); // Track initial connection state to avoid showing modal on app launch
   const lastConnectionState = useRef<boolean | null>(null); // Track the previous connection state to detect changes
 
   const handleMessage = (isConnected: boolean) => {
     onlineManager.setOnline(isConnected);
 
     if (hasCheckedInitialConnection.current) {
-      Toast.show({
-        type: isConnected ? 'success' : 'error',
-        text1: isConnected ? 'Connection Restored' : 'Connection Lost',
-        text2: isConnected ? 'You are back online!' : 'You have lost your internet connection.',
-        position: 'top',
+      CustomToast({ 
+        type: isConnected ? ToastTypes.SUCCESS : ToastTypes.ERROR, 
+        title: isConnected ? 'Connection Restored' : 'Connection Lost', 
+        message: isConnected ? 'You are back online!' : 'You have lost your internet connection.'
       });
     }
   };
@@ -40,4 +39,6 @@ export const useNetwork = () => {
 
     return () => unsubscribe();
   }, []);
+
+  return 
 };
