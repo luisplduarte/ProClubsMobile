@@ -1,11 +1,12 @@
-import { View, StyleSheet, Text, ScrollView, ActivityIndicator, Dimensions } from 'react-native';
+import { View, StyleSheet, Text, ScrollView, ActivityIndicator, Dimensions, Alert } from 'react-native';
 import React from 'react';
 import { useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
-import { fetchFavoriteClubs } from '../../api/favoritesService';
+import { exportFavorites, fetchFavoriteClubs } from '../../api/favoritesService';
 import { ClubInfo as ClubInfoType } from '../../types/ClubInfoTypes';
-import { VStack } from '@/components/ui/vstack';
 import CardLayout from '@/components/cards/CardLayout';
+import Button from '@/components/Button';
+import { ButtonTypes } from '@/types/ButtonTypes';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -23,6 +24,16 @@ export default function ClubFavorites() {
     router.push(`/clubDetails?id=${clubId}`);
   }
 
+  const handleExportFavorites = async () => {
+    try {
+      const exportPath = exportFavorites(favorites || []);
+      Alert.alert('Export Successful', `Favorites exported to: ${exportPath}`);
+    } catch (err) {
+      console.error('Error exporting favorites:', err);
+      Alert.alert('Export Failed', 'An error occurred while exporting favorites.');
+    }
+  };
+
   if (isLoading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
@@ -38,6 +49,16 @@ export default function ClubFavorites() {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+        <Button 
+          label="Export" 
+          onPress={handleExportFavorites} 
+          disabled={!favorites || !favorites.length} 
+          style={{
+            width: screenWidth / 2 - 16,
+            flex: 1,
+            opacity: !favorites || !favorites.length ? 0.6 : 1,
+          }}
+        />
         {favorites && favorites.length ? favorites.map((club) => {
           return (
             <CardLayout style={styles.card} onClick={() => handleClubClicked(club.id)} key={club.id}>
