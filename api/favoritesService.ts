@@ -1,6 +1,7 @@
 import { Platform } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
+import * as Print from 'expo-print';
 import * as DocumentPicker from 'expo-document-picker';
 import * as MediaLibrary from 'expo-media-library';
 import { ClubInfo as ClubInfoType } from '@/types/ClubInfoTypes';
@@ -38,7 +39,6 @@ export const addClubToFavorites = async (newClub: ClubInfoType): Promise<ClubInf
         
         const updatedFavorites = [...currentFavorites, newClub];
         await FileSystem.writeAsStringAsync(FAVORITES_FILE_PATH, JSON.stringify(updatedFavorites));
-        console.log('Club added to favorites successfully.');
         
         return {...newClub, isFavorite: !newClub.isFavorite };
     } catch (err) {
@@ -78,81 +78,54 @@ export const checkIsFavorite = async (clubId: string) : Promise<boolean> => {
     } 
 };
 
-// export const exportFavorites = async (favoritesList: ClubInfoType[]) : Promise<string> => {
-//     try {
-//         const exportPath = `${FileSystem.documentDirectory}exported_favorites.json`;
-//         await FileSystem.writeAsStringAsync(exportPath, JSON.stringify(favoritesList, null, 2));
-//         return exportPath;
-//     } catch (err) {
-//         console.error('Error reading favorites file:', err);
-//         throw new Error('Failed to export favorites.');
-//     } 
-// };
-
-export const exportFavorites = async (favoritesList: ClubInfoType[]): Promise<void> => {
+/**
+ * Function that exports favorites clubs list to PDF
+ * @param favoritesList clubs added to favorites by the user
+ */
+export const exportFavorites = async (favoritesList: ClubInfoType[]): Promise<string> => {
     try {
-      const exportPath = `${FileSystem.documentDirectory}exported_favorites.json`;
+      const htmlContent = `
+        <html>
+          <head>
+            <title>Favorites</title>
+          </head>
+          <body>
+            <h1>Favorite Clubs</h1>
+            <ul>
+              ${favoritesList.map(club => `<li><strong>${club.name}</strong> (${club.id})</li>`).join('')}
+            </ul>
+          </body>
+        </html>
+      `;
   
-      // Save file in internal file system of the app
-      await FileSystem.writeAsStringAsync(exportPath, JSON.stringify(favoritesList, null, 2));
-      console.log('File stored in:', exportPath);
+      // Generate a PDF file from the HTML content
+      const { uri } = await Print.printToFileAsync({ html: htmlContent });
   
+      // For iOS
       if (Platform.OS === 'ios') {
+        // Check if sharing functionality is available on the device
         if (await Sharing.isAvailableAsync()) {
-            // Enable share prompt (send via WhatsApp, Gmail, Facebook, etc.)
-            await Sharing.shareAsync(exportPath, {
-              mimeType: 'application/json',
-              dialogTitle: 'Export file',
-              UTI: 'public.item',   // On iOS, the UTI “public.item” is a generic type that tells iOS the file is some type of file, which can be saved to the user’s filesystem
-            });
-            console.log('Export successful');
+          await Sharing.shareAsync(uri, {UTI: 'public.item'});  // Share the PDF file using the device's share dialog
         } else {
-            console.log('Sharing not available in this device.');
+          throw new Error('Sharing not available on this device.');
         }
       } else {
-        const { status } = await MediaLibrary.requestPermissionsAsync();
+        // For Android
+        const { status } = await MediaLibrary.requestPermissionsAsync();    // Request media library permissions
         if (status !== 'granted') {
-            console.log('Media library permissions not granted.');
-            return;
+          throw new Error('Media library permissions not granted.');
         }
-        const asset = await MediaLibrary.createAssetAsync(exportPath);
+
+        const asset = await MediaLibrary.createAssetAsync(uri); // Create a media asset for the PDF file
         const album = await MediaLibrary.getAlbumAsync('Download');
-        if (album == null) {
-            await MediaLibrary.createAlbumAsync('Download', asset, false);
-        } else {
-            await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
-        }
+        if (!album) await MediaLibrary.createAlbumAsync('Download', asset, false);
+        else await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
       }
-      
+
+      return uri;
+
     } catch (err) {
-      console.error('Error:', err);
+      console.error('Error exporting favorites as PDF:', err);
+      throw new Error('Failed to export favorites');
     }
 };
-
-/*
-export const exportFavorites = async (favoritesList: ClubInfoType[]): Promise<void> => {
-    try {
-      const jsonData = JSON.stringify(favoritesList, null, 2);
-  
-      // User can pick folder (only works in Android)
-      const documentPickerResult = await DocumentPicker.getDocumentAsync({
-        type: 'application/json',
-        copyToCacheDirectory: true,
-      });
-  
-      if (documentPickerResult.canceled) {
-        console.log('User didn\'t select folder');
-        return;
-      }
-  
-      console.log("documentPickerResult.assets[0] = ", documentPickerResult.assets[0]);
-
-      const destinationUri = '/';
-  
-      await FileSystem.writeAsStringAsync(destinationUri, jsonData);
-      console.log(`File saved in: ${destinationUri}`);
-    } catch (err) {
-      console.error('Error :', err);
-    }
-};
-*/

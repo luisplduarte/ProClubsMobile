@@ -1,12 +1,13 @@
-import { View, StyleSheet, Text, ScrollView, ActivityIndicator, Dimensions, Alert } from 'react-native';
+import { View, StyleSheet, Text, ScrollView, ActivityIndicator, Dimensions } from 'react-native';
 import React from 'react';
 import { useRouter } from 'expo-router';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { exportFavorites, fetchFavoriteClubs } from '../../api/favoritesService';
 import { ClubInfo as ClubInfoType } from '../../types/ClubInfoTypes';
 import CardLayout from '@/components/cards/CardLayout';
 import Button from '@/components/Button';
-import { ButtonTypes } from '@/types/ButtonTypes';
+import CustomToast from '@/components/CustomToast';
+import { ToastTypes } from '@/types/ToastTypes';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -20,19 +21,31 @@ export default function ClubFavorites() {
     }
   );
 
+  const exportFavoritesMutation = useMutation({
+    mutationFn: (favorites: ClubInfoType[] ) => exportFavorites(favorites || null),
+    onSuccess: (exportPath: string) => {
+      CustomToast({ 
+        type: ToastTypes.SUCCESS, 
+        title: 'Action Successful', 
+        message: `Favorites exported to: ${exportPath}`
+      });
+    },
+    onError: () => {
+      CustomToast({ 
+        type: ToastTypes.ERROR, 
+        title: 'Action Failed', 
+        message: 'An error occurred while exporting favorites.'
+      });
+    },
+  });
+
+  const handleExportFavorites = async () => {
+    if (favorites && favorites.length) exportFavoritesMutation.mutate(favorites);
+  };
+
   const handleClubClicked = (clubId: string) => {
     router.push(`/clubDetails?id=${clubId}`);
   }
-
-  const handleExportFavorites = async () => {
-    try {
-      const exportPath = exportFavorites(favorites || []);
-      Alert.alert('Export Successful', `Favorites exported to: ${exportPath}`);
-    } catch (err) {
-      console.error('Error exporting favorites:', err);
-      Alert.alert('Export Failed', 'An error occurred while exporting favorites.');
-    }
-  };
 
   if (isLoading) {
     return <ActivityIndicator size="large" color="#0000ff" />;

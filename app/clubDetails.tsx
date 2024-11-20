@@ -41,7 +41,6 @@ export default function ClubDetails() {
       });
     },
     onError: (err) => {
-      console.log("Favorites operation failed, error: ", err);
       CustomToast({ 
         type: ToastTypes.ERROR, 
         title: 'Action Failed', 
@@ -63,8 +62,7 @@ export default function ClubDetails() {
         message: 'Club removed from favorites!'
       });
     },
-    onError: (err) => {
-      console.log("Favorites operation failed, error: ", err);
+    onError: () => {
       CustomToast({ 
         type: ToastTypes.ERROR, 
         title: 'Action Failed', 
