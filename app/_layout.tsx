@@ -25,7 +25,7 @@ Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
     shouldPlaySound: true,
-    shouldSetBadge: false,
+    shouldSetBadge: true,
   }),
 });
 
@@ -50,7 +50,7 @@ export default function RootLayout() {
     const subscription = Notifications.addNotificationReceivedListener(notification => {
       CustomToast({
         type: ToastTypes.SUCCESS,
-        title: 'New notification!',
+        title: notification.request.content.title || "",
         message: notification.request.content.body || "",
       })
     });
