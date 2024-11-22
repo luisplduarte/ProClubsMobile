@@ -1,36 +1,40 @@
 import { View, StyleSheet, Text } from 'react-native';
+import { useMutation } from '@tanstack/react-query';
 import ImageViewer from "@/components/ImageViewer";
 import Button from '@/components/Button';
 import CustomToast from '@/components/CustomToast';
 import { ToastTypes } from '@/types/ToastTypes';
+import { NotificationPayload } from '@/types/NotificationTypes';
 import { sendNotificationToAll } from '@/api/notificationsService';
 
 const PlaceholderImage = require('@/assets/images/splash.png');
 
 export default function Index() {
-  const handleSendNotification = async () => {
-    //TODO change this to tanstack mutation
-    try {
-      const payload = {
-        title: 'Nova mensagem!',
-        body: 'Clique aqui para conferir.',
-      };
-  
-      await sendNotificationToAll(payload);
-  
+  const sendNotificationMutation = useMutation({
+    mutationFn: ( payload: NotificationPayload ) => sendNotificationToAll(payload),
+    onSuccess: () => {
       CustomToast({ 
         type: ToastTypes.SUCCESS, 
-        title: 'Notificação enviada!',
-        message: 'Todos os utilizadores foram notificados.'
+        title: 'Notification sent!',
+        message: 'All users were notified.'
       });
-
-    } catch (error) {
+    },
+    onError: () => {
       CustomToast({ 
         type: ToastTypes.ERROR, 
-        title: 'Erro!',
-        message: 'Não foi possível enviar a notificação.'
+        title: 'Action Failed', 
+        message: 'An error occurred while notifying users.'
       });
-    }
+    },
+  });
+
+  const handleSendNotification = async () => {
+    const payload: NotificationPayload = {
+      title: 'Treino!',
+      body: 'Pro clubs às 22h.',
+    };
+
+    sendNotificationMutation.mutate(payload);
   };
 
   return (
@@ -40,7 +44,7 @@ export default function Index() {
         <ImageViewer imgSource={PlaceholderImage} />
       </View>
       <Button
-        label="Enviar Notificação"
+        label="Notify players"
         onPress={handleSendNotification}
       />
     </View>

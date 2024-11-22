@@ -2,11 +2,7 @@ import { collection, addDoc, getDocs, query, where, deleteDoc, doc } from 'fireb
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { db } from '@/utils/firebaseConfig';
-
-export interface NotificationPayload {
-  title: string;
-  body: string;
-}
+import { NotificationPayload } from '@/types/NotificationTypes';
 
 /**
  * Function to register for push notifications

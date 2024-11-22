@@ -48,7 +48,6 @@ export default function RootLayout() {
   // Listener for incoming notifications
   useEffect(() => {
     const subscription = Notifications.addNotificationReceivedListener(notification => {
-      console.log('Notification received:', notification);
       CustomToast({
         type: ToastTypes.SUCCESS,
         title: 'New notification!',

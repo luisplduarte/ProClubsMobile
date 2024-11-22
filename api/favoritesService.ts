@@ -32,10 +32,7 @@ export const addClubToFavorites = async (newClub: ClubInfoType): Promise<ClubInf
         
         // Check for duplicates
         const isAlreadyFavorite = currentFavorites.some(club => club.id === newClub.id);
-        if (isAlreadyFavorite) {
-            console.warn('Club is already in favorites.');
-            return null;
-        }
+        if (isAlreadyFavorite) return null;
         
         const updatedFavorites = [...currentFavorites, newClub];
         await FileSystem.writeAsStringAsync(FAVORITES_FILE_PATH, JSON.stringify(updatedFavorites));
@@ -51,10 +48,7 @@ export const removeClubFromFavorites = async (club: ClubInfoType): Promise<ClubI
     try {
         const currentFavorites = await fetchFavoriteClubs();
         const updatedFavorites = currentFavorites.filter(auxClub => auxClub.id !== club.id);
-        if (updatedFavorites.length === currentFavorites.length) {
-            console.warn('Club not found in favorites.');
-            return null;
-        }
+        if (updatedFavorites.length === currentFavorites.length) return null;
 
         await FileSystem.writeAsStringAsync(FAVORITES_FILE_PATH, JSON.stringify(updatedFavorites));
         return {...club, isFavorite: !club.isFavorite };
