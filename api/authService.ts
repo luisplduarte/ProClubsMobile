@@ -4,7 +4,10 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, Au
 export const signUp = async (email: string, password: string) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    return userCredential.user.getIdToken();
+    return {
+      token: userCredential.user.getIdToken(),
+      uid: userCredential.user.uid
+    };
   } catch (error) {
     const authError = error as AuthError;
     let errorMessage = "An unknown error occurred. Please try again.";
@@ -18,7 +21,10 @@ export const signUp = async (email: string, password: string) => {
 export const logIn = async (email: string, password: string) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    return userCredential.user.getIdToken();
+    return {
+      token: userCredential.user.getIdToken(),
+      uid: userCredential.user.uid
+    };
   } catch (error) {
     console.error("Error during login:", error);
     throw error;
