@@ -20,7 +20,7 @@ export default function Button({ label, theme, style, disabled, onPress }: Props
     logout: {
       container: { backgroundColor: '#ff5c5c' },
       label: { color: '#fff' },
-      icon: { name: 'sign-out' as 'sign-out', color: '#fff' },
+      // icon: { name: 'sign-out' as 'sign-out', color: '#fff' },
     },
     default: {
       container: { backgroundColor: '#fff' },
