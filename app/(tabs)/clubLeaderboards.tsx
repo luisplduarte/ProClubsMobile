@@ -1,16 +1,15 @@
-import { View, StyleSheet, Text, ActivityIndicator, Dimensions, ScrollView } from 'react-native';
-import React from 'react';
+import { View, StyleSheet, Text, ActivityIndicator, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Carousel from 'react-native-reanimated-carousel';
 import { fetchClubPlayers } from '../../api/clubService';
 import { ClubPlayersInfo, Player } from '@/types/PlayerTypes';
 import StatSection from '@/components/StatSection';
-import { Accordion, AccordionContent, AccordionHeader, AccordionItem, AccordionTitleText, AccordionTrigger } from '@/components/ui/accordion';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 const { width: screenWidth } = Dimensions.get('window');
 
 export default function ClubLeaderboards() { 
+  const [selectedTab, setSelectedTab] = useState<string>('Overall');
   const { data: clubPlayers, isLoading, error } = useQuery<ClubPlayersInfo, Error>(
     {
       queryKey: ['clubPlayers'],
@@ -44,6 +43,12 @@ export default function ClubLeaderboards() {
     topDefensiveCleanSheets: clubPlayers?.members.slice().sort((a, b) => parseInt(b.cleanSheetsDef) - parseInt(a.cleanSheetsDef)) || [],
   };
 
+  const tabs = [
+    { key: 'Overall', label: 'Overall' },
+    { key: 'Attack', label: 'Attack' },
+    { key: 'Defense', label: 'Defense' },
+  ];
+
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
@@ -68,66 +73,43 @@ export default function ClubLeaderboards() {
           />
         )}
 
-        <StatSection headerText={'Matches played:'} statKey={'topMatchesPlayed'} data={sortedStats.topMatchesPlayed} renderValue={(player) => player.gamesPlayed} />
-        <StatSection headerText={'Most MOTM:'} statKey={'topManOfTheMatch'} data={sortedStats.topManOfTheMatch} renderValue={(player) => player.manOfTheMatch} />
-        <StatSection headerText={'Average rating:'} statKey={'topAverageRating'} data={sortedStats.topAverageRating} renderValue={(player) => player.ratingAve} />
+        <View style={styles.tabsContainer}>
+          {tabs.map((tab) => (
+            <TouchableOpacity
+              key={tab.key}
+              style={[styles.tab, selectedTab === tab.key && styles.activeTab]}
+              onPress={() => setSelectedTab(tab.key)}
+            >
+              <Text style={[styles.tabText, selectedTab === tab.key && styles.activeTabText]}>{tab.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-        <Accordion style={styles.accordionContainer}>
-          <AccordionItem value="Attack">
-            <AccordionHeader>
-              <AccordionTrigger>
-                {({ isExpanded }) => {
-                  return (
-                    <>
-                      <AccordionTitleText>Attack:</AccordionTitleText>
-                      {isExpanded ? (
-                        <FontAwesome name={'chevron-up'}/>
-                      ) : (
-                        <FontAwesome name={'chevron-down'}/>
-                      )}
-                    </>
-                  )
-                }}
-              </AccordionTrigger>
-            </AccordionHeader>
-            <AccordionContent children={
-              <View>
+        <View style={{ width: '85%' }}>
+          {selectedTab === 'Overall' ?
+            <>
+              <StatSection headerText={'Matches played:'} statKey={'topMatchesPlayed'} data={sortedStats.topMatchesPlayed} renderValue={(player) => player.gamesPlayed} />
+              <StatSection headerText={'Most MOTM:'} statKey={'topManOfTheMatch'} data={sortedStats.topManOfTheMatch} renderValue={(player) => player.manOfTheMatch} />
+              <StatSection headerText={'Average rating:'} statKey={'topAverageRating'} data={sortedStats.topAverageRating} renderValue={(player) => player.ratingAve} />
+            </>
+            : 
+            selectedTab === 'Attack' ? 
+              <>
                 <StatSection headerText={'Top scorers:'} statKey={'topScorers'} data={sortedStats.topScorers} renderValue={(player) => player.goals} />
                 <StatSection headerText={'Most assists:'} statKey={'topAssists'} data={sortedStats.topAssists} renderValue={(player) => player.assists} />
                 <StatSection headerText={'Goals + assists:'} statKey={'topGoalsAndAssists'} data={sortedStats.topGoalsAndAssists} renderValue={(player) => parseInt(player.goals) + parseInt(player.assists)} />
                 <StatSection headerText={'Passes per match:'} statKey={'topPassesPerMatch'} data={sortedStats.topPassesPerMatch} renderValue={(player) => (parseInt(player.passesMade) / parseInt(player.gamesPlayed)).toFixed(2)} />
                 <StatSection headerText={'Pass success rate:'} statKey={'topPassSuccessRate'} data={sortedStats.topPassSuccessRate} renderValue={(player) => `${player.passSuccessRate} %`} />
-              </View>
-            }/>
-          </AccordionItem>
-
-          <AccordionItem value="Defense">
-            <AccordionHeader>
-              <AccordionTrigger>
-                {({ isExpanded }) => {
-                  return (
-                    <>
-                      <AccordionTitleText>Defense:</AccordionTitleText>
-                      {isExpanded ? (
-                        <FontAwesome name={'chevron-up'}/>
-                      ) : (
-                        <FontAwesome name={'chevron-down'}/>
-                      )}
-                    </>
-                  )
-                }}
-              </AccordionTrigger>
-            </AccordionHeader>
-            <AccordionContent children={
-              <View>
-                <StatSection headerText={'Tackles per match:'} statKey={'topAssists'} data={sortedStats.topTacklesPerMatch} renderValue={(player) => (parseInt(player.tacklesMade) / parseInt(player.gamesPlayed)).toFixed(2)} />
-                <StatSection headerText={'Tackle success rate:'} statKey={'topTackleSuccessRate'} data={sortedStats.topTackleSuccessRate} renderValue={(player) => `${player.tackleSuccessRate} %`} />
-                <StatSection headerText={'Defensive clean sheets:'} statKey={'topDefensiveCleanSheets'} data={sortedStats.topDefensiveCleanSheets} renderValue={(player) => player.cleanSheetsDef} />
-              </View>
-            }/>
-          </AccordionItem>
-        </Accordion>
-
+              </>
+            :
+            <>
+              <StatSection headerText={'Tackles per match:'} statKey={'topTacklesPerMatch'} data={sortedStats.topTacklesPerMatch} renderValue={(player) => (parseInt(player.tacklesMade) / parseInt(player.gamesPlayed)).toFixed(2)} />
+              <StatSection headerText={'Tackle success rate:'} statKey={'topTackleSuccessRate'} data={sortedStats.topTackleSuccessRate} renderValue={(player) => `${player.tackleSuccessRate} %`} />
+              <StatSection headerText={'Defensive clean sheets:'} statKey={'topDefensiveCleanSheets'} data={sortedStats.topDefensiveCleanSheets} renderValue={(player) => player.cleanSheetsDef} />
+            </>
+          }
+        </View>
+        
       </ScrollView> 
     </View>
   );
@@ -147,11 +129,6 @@ const styles = StyleSheet.create({
   scrollContainer: {
     paddingBottom: 24,
     alignItems: 'center',
-  },
-  accordionContainer: {
-    backgroundColor: '#ffffff',
-    width: '100%',
-    borderRadius: 8,
   },
   errorText: {
     color: 'red',
@@ -175,5 +152,28 @@ const styles = StyleSheet.create({
   playerDetails: {
     fontSize: 16,
     color: '#ffffff',
+  },
+  tabsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    backgroundColor: '#646466',
+    paddingVertical: 8,
+    width: '85%',
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  tab: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  activeTab: {
+    borderBottomWidth: 2,
+    borderBottomColor: '#C02727',
+  },
+  tabText: {
+    color: '#fff',
+  },
+  activeTabText: {
+    fontWeight: 'bold',
   },
 });
