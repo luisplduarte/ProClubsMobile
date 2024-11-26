@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "ProClubsMobile",
+    "name": "Trio Mágico App",
     "slug": "trio-magico-app",
     "entryPoint": "./node_modules/expo-router/entry.js",
     "version": "1.0.0",
@@ -8,6 +8,9 @@
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
@@ -15,9 +18,6 @@
     },
     "ios": {
       "supportsTablet": true,
-      "config": {
-        "usesNonExemptEncryption": false
-      },
       "infoPlist": {
         "UIBackgroundModes": [
           "remote-notification"
@@ -51,6 +51,9 @@
         "projectId": "7f1676c6-3355-47f9-8715-4e9058ce545c"
       }
     },
-    "owner": "luisplduarte"
+    "owner": "luisplduarte",
+    "updates": {
+      "url": "https://u.expo.dev/7f1676c6-3355-47f9-8715-4e9058ce545c"
+    }
   }
 }
