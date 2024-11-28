@@ -1,10 +1,20 @@
 import { useEffect, useState } from 'react';
-import { onAuthStateChanged, User } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../utils/firebaseConfig';
 import { saveUserData, getUserData, deleteUserData } from '../utils/secureStore';
 
+interface UserData {
+  uid: string;
+  email: string;
+}
+
+interface User {
+  accessToken: string;
+  userData: UserData;
+}
+
 export const useAuth = () => {
-  const [user, setUser] = useState<object | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -18,8 +28,19 @@ export const useAuth = () => {
           const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             if (firebaseUser) {
               const token = await firebaseUser.getIdToken();
-              await saveUserData(token, firebaseUser);
-              setUser(firebaseUser);
+
+              const userData: UserData = {
+                uid: firebaseUser.uid,
+                email: firebaseUser.email || '',
+              };
+
+              const transformedUser: User = {
+                accessToken: token,
+                userData,
+              };
+
+              await saveUserData(token, transformedUser);
+              setUser(transformedUser);
             } else {
               await deleteUserData();
               setUser(null);

@@ -6,6 +6,7 @@ import { useMutation } from '@tanstack/react-query';
 import { Link, LinkText } from '@/components/ui/link';
 import { logIn } from '../api/authService';
 import { saveUserData } from '../utils/secureStore';
+import { registerPushToken, registerForPushNotificationsAsync } from '@/api/notificationsService';
 
 export default function Login() {
   const router = useRouter();
@@ -14,11 +15,17 @@ export default function Login() {
 
   const mutation = useMutation({
     mutationFn: async (data: FieldValues) => {
-      const accessToken = await logIn(data.email, data.password);
-      await saveUserData(accessToken, { email: data.email });
-      return accessToken;
+      const {token, uid} = await logIn(data.email, data.password);
+      await saveUserData(await token, { uid: uid, email: data.email });
+      
+      const pushToken = await registerForPushNotificationsAsync();
+      if (pushToken) {
+        await registerPushToken(uid, pushToken);
+      }
+
+      return token;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       router.replace('/');
     },
     onError: () => {

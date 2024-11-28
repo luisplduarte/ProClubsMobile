@@ -7,8 +7,11 @@ import { setStatusBarStyle } from "expo-status-bar";
 import { useEffect } from "react";
 import { RootSiblingParent } from 'react-native-root-siblings';
 import Toast from 'react-native-toast-message';
+import * as Notifications from 'expo-notifications';
 import { useAuth } from '../hooks/useAuth';
 import { useNetwork } from "@/hooks/useNetwork";
+import CustomToast from '@/components/CustomToast';
+import { ToastTypes } from '@/types/ToastTypes';
 
 const queryClient = new QueryClient();
 
@@ -16,6 +19,15 @@ const queryClient = new QueryClient();
 // import * as SplashScreen from 'expo-splash-screen';
 // SplashScreen.preventAutoHideAsync();
 // setTimeout(SplashScreen.hideAsync, 5000);
+
+// Configure notification behavior
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
 
 export default function RootLayout() {
   const router = useRouter();
@@ -32,6 +44,21 @@ export default function RootLayout() {
   useEffect(() => {
     if (!isLoading && !user) router.replace('/login');
   }, [user, isLoading]);
+
+  // Listener for incoming notifications
+  useEffect(() => {
+    const subscription = Notifications.addNotificationReceivedListener(notification => {
+      CustomToast({
+        type: ToastTypes.SUCCESS,
+        title: notification.request.content.title || "",
+        message: notification.request.content.body || "",
+      })
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   if (isLoading) {
     return <ActivityIndicator size="large" color="#0000ff" />;

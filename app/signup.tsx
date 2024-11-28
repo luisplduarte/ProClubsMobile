@@ -16,9 +16,9 @@ export default function SignUpScreen() {
 
   const mutation = useMutation({
     mutationFn: async (data: FieldValues) => {
-      const accessToken = await signUp(data.email, data.password);
-      await saveUserData(accessToken, { email: data.email });
-      return accessToken;
+      const {token, uid} = await signUp(data.email, data.password);
+      await saveUserData(await token, { uid: uid, email: data.email });
+      return token;
     },
     onSuccess: () => {
       router.replace('/');
