@@ -62,9 +62,6 @@ export default function Clubs() {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         <View style={styles.searchContainer}>
-
-        
-        
           <Controller
             control={control}
             name="searchInput"
@@ -88,28 +85,22 @@ export default function Clubs() {
               </>
             )}
           />
-
-          <Button label='' onPress={handleSubmit(handleSearchClick)} theme={ButtonTypes.SEARCH} style={{ height: 50, width: 50, margin: 0 }}
-            
-          />
-          
-
+          <Button label='' onPress={handleSubmit(handleSearchClick)} theme={ButtonTypes.SEARCH} style={{ height: 50, width: 50, margin: 0 }} />
         </View>
 
         {errors.searchInput && (
-                  <Text style={styles.errorText}>{errors.searchInput.message}</Text>
-                )}
+          <Text style={styles.errorText}>{errors.searchInput.message}</Text>
+        )}
 
         {clubs && clubs.map((club) => {
-                return (
-                  <CardLayout style={styles.card} onClick={() => handleClubClicked(club.clubId)} key={club.clubId}>
-                    <View>
-                      <Text style={styles.text}>{club.name}</Text>
-                    </View>
-                  </CardLayout>
-                )})
-              }  
-
+          return (
+            <CardLayout style={styles.card} onClick={() => handleClubClicked(club.clubId)} key={club.clubId}>
+              <View>
+                <Text style={styles.text}>{club.name}</Text>
+              </View>
+            </CardLayout>
+          )})
+        }  
       </ScrollView>
     </View>
   );
