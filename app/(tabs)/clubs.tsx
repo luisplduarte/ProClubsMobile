@@ -1,4 +1,4 @@
-import { View, StyleSheet, Text, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
+import { View, StyleSheet, Text, ScrollView, TouchableOpacity, Dimensions, TextInput } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import React, { useState, useEffect } from 'react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
@@ -9,6 +9,9 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchClubByName } from '../../api/clubService';
 import CardLayout from '@/components/cards/CardLayout';
 import { SimplifiedClubInfo } from '../../types/ClubInfoTypes';
+import Button from '@/components/Button';
+import { ButtonTypes } from '@/types/ButtonTypes';
+import { HStack } from '@/components/ui/hstack';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -58,39 +61,46 @@ export default function Clubs() {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-        <Controller
-          control={control}
-          name="searchInput"
-          defaultValue=""
-          rules={{ required: 'Must insert a value' }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <>
-              <Input
-                variant="rounded"
-                size="md"
-                style={{ borderColor: '#ffffff', margin: 16 }}
-              >
-                <InputField
+        <View style={styles.searchContainer}>
+
+        
+        
+          <Controller
+            control={control}
+            name="searchInput"
+            defaultValue=""
+            rules={{ required: 'Must insert a value' }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <>
+                <TextInput
                   placeholder="Enter club name..."
-                  style={{ color: '#ffffff' }}
-                  onChangeText={(text) => {
-                    onChange(text);
-                  }}
-                  onBlur={onBlur}
                   value={value}
+                  onChangeText={onChange}
+                  style={styles.input}
+                  placeholderTextColor="#000"
                 />
-                <InputSlot>
-                  <TouchableOpacity onPress={handleSubmit(handleSearchClick)}>
-                  <InputIcon as={() => <FontAwesome name="search" size={20} color="#ffffff" style={{ padding: 16 }} />} />
-                  </TouchableOpacity>
-                </InputSlot>
-              </Input>
 
-              {errors.searchInput && (
-                <Text style={styles.errorText}>{errors.searchInput.message}</Text>
-              )}
+                
 
-              {clubs && clubs.map((club) => {
+                
+
+                  
+              </>
+            )}
+          />
+
+          <Button label='' onPress={handleSubmit(handleSearchClick)} theme={ButtonTypes.SEARCH} style={{ height: 50, width: 50, margin: 0 }}
+            
+          />
+          
+
+        </View>
+
+        {errors.searchInput && (
+                  <Text style={styles.errorText}>{errors.searchInput.message}</Text>
+                )}
+
+        {clubs && clubs.map((club) => {
                 return (
                   <CardLayout style={styles.card} onClick={() => handleClubClicked(club.clubId)} key={club.clubId}>
                     <View>
@@ -98,10 +108,8 @@ export default function Clubs() {
                     </View>
                   </CardLayout>
                 )})
-              }    
-            </>
-          )}
-        />
+              }  
+
       </ScrollView>
     </View>
   );
@@ -127,6 +135,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     fontSize: 18,
+    marginBottom: 16,
   },
   text: {
     fontSize: 20,
@@ -134,6 +143,10 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     textAlign: 'center',
     marginBottom: 8,
+  },
+  searchContainer: {
+    flexDirection: 'row', 
+    marginBottom: 12,
   },
   card: {
     width: screenWidth / 2 - 16,
@@ -147,5 +160,16 @@ const styles = StyleSheet.create({
   clubDetails: {
     fontSize: 16,
     color: '#ffffff',
+  },
+  input: {
+    height: 50,
+    width: '50%',
+    borderColor: '#ffffff',
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 12,
+    marginRight: 8,
+    paddingHorizontal: 8,
+    backgroundColor: '#fff',
   },
 });
