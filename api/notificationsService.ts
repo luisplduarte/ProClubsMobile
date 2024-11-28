@@ -10,25 +10,25 @@ import { NotificationPayload } from '@/types/NotificationTypes';
  */
 export const registerForPushNotificationsAsync = async (): Promise<string | null> => {
     try {
-        if (!Device.isDevice) {
-            console.log('Push notifications are not supported on emulators.');
-            return null;
-        }
+      if (!Device.isDevice) {
+        console.log('Push notifications are not supported on emulators.');
+        return null;
+      }
 
-        const { status: existingStatus } = await Notifications.getPermissionsAsync();
-        
-        let finalStatus = existingStatus;
-        if (existingStatus !== 'granted') {
-            const { status } = await Notifications.requestPermissionsAsync();
-            finalStatus = status;
-        }
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
 
-        if (finalStatus !== 'granted') return null;
-        
-        return (await Notifications.getExpoPushTokenAsync({projectId: process.env.EXPO_PUBLIC_PROJECT_ID})).data;
+      if (finalStatus !== 'granted') return null;
+      
+      return (await Notifications.getExpoPushTokenAsync({projectId: process.env.EXPO_PUBLIC_PROJECT_ID})).data;
     } catch (error) {
-        console.error('Error registering push token:', error);
-        throw new Error('Failed to register push token.');
+      console.error('Error registering push token:', error);
+      throw new Error('Failed to register push token.');
     }
 };
 

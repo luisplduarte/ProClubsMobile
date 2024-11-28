@@ -21,6 +21,6 @@ export default function LogoutButton() {
     };
 
     return (
-      <Button label="LOGOUT" theme={ButtonTypes.LOGOUT} onPress={() => handleLogout()} style={{ width: '40%', height: '75%' }}/>
+      <Button label="LOGOUT" theme={ButtonTypes.LOGOUT} onPress={() => handleLogout()} style={{ width: 100, height: 50 }}/>
     )
 };

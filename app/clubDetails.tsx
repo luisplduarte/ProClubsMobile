@@ -95,12 +95,12 @@ export default function ClubDetails() {
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         {clubInfo && 
           <>
-            <HStack space="md" reversed={false}>
+            <View style={styles.nameContainer}>
               <Text style={styles.title}>{clubInfo.name}</Text>
               <TouchableOpacity onPress={toggleFavorite}>
-                <FontAwesome name={'heart'} color={clubInfo.isFavorite ? '#ff5c5c' : '#646466'} size={32} style={{ marginVertical: 8 }} />
+                <FontAwesome name={'heart'} color={clubInfo.isFavorite ? '#ff5c5c' : '#646466'} size={32} style={{ margin: 8 }} />
               </TouchableOpacity>
-            </HStack>
+            </View>
             
             <VStack space="lg" style={styles.vStackContainer}>
               <CardLayout>
@@ -169,6 +169,9 @@ const styles = StyleSheet.create({
   scrollContainer: {
     paddingBottom: 24,
     alignItems: 'center',
+  },
+  nameContainer: {
+    flexDirection: 'row', 
   },
   errorText: {
     color: 'red',

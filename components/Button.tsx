@@ -22,6 +22,11 @@ export default function Button({ label, theme, style, disabled, onPress }: Props
       label: { color: '#fff' },
       // icon: { name: 'sign-out' as 'sign-out', color: '#fff' },
     },
+    search: {
+      // container: { backgroundColor: '#bebebe' },
+      label: { color: '#fff' },
+      icon: { name: 'search' as 'search', color: '#fff' },
+    },
     default: {
       container: { backgroundColor: '#fff' },
       label: { color: '#25292e' },
@@ -31,7 +36,7 @@ export default function Button({ label, theme, style, disabled, onPress }: Props
   return (
     <View style={[styles.buttonContainer, themeStyles.container, style]}>
       <Pressable style={styles.button} onPress={onPress} disabled={disabled}>
-        { themeStyles.icon && <FontAwesome name={themeStyles.icon.name} size={18} color={themeStyles.icon.color}  style={styles.buttonIcon} /> }
+        { themeStyles.icon && <FontAwesome name={themeStyles.icon.name} size={18} color={themeStyles.icon.color} /> }
         <Text style={[styles.buttonLabel, themeStyles.label]}>
           {label}
         </Text>
@@ -54,9 +59,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'row',
     padding: 14,
-  },
-  buttonIcon: {
-    paddingRight: 8,
   },
   buttonLabel: {
     fontSize: 16,
