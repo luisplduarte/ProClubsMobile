@@ -1,4 +1,3 @@
-// LoginScreen.js
 import React, { useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useRouter } from "expo-router";
@@ -6,9 +5,9 @@ import { useForm, Controller, FieldValues } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { Link, LinkText } from '@/components/ui/link';
 import { logIn } from '../api/authService';
-import { saveAccessToken } from '../utils/secureStore';
+import { saveUserData } from '../utils/secureStore';
 
-export default function LoginScreen() {
+export default function Login() {
   const router = useRouter();
   const { control, handleSubmit, formState: { errors } } = useForm();
   const [error, setError] = useState('');
@@ -16,7 +15,7 @@ export default function LoginScreen() {
   const mutation = useMutation({
     mutationFn: async (data: FieldValues) => {
       const accessToken = await logIn(data.email, data.password);
-      await saveAccessToken(accessToken);
+      await saveUserData(accessToken, { email: data.email });
       return accessToken;
     },
     onSuccess: () => {
@@ -30,10 +29,6 @@ export default function LoginScreen() {
   const onSubmit = async (data: FieldValues) => {
     setError('');
     mutation.mutate(data);
-  };
-
-  const handleSignup = () => {
-    router.replace('/signup');
   };
 
   return (

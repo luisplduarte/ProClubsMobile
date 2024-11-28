@@ -29,6 +29,13 @@ export default function Clubs() {
     }
   );
 
+  // Clears form state when screen gains focus
+  //TODO: change this to a normal useEffect with clean up function
+  // useFocusEffect( () => {
+  //   reset();
+  //   setInputText('');
+  // }, [reset]);
+  
   useEffect(() => {
     if (isFocused) {
       reset();

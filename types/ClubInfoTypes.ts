@@ -26,6 +26,7 @@ export interface ClubInfo {
   ties: string;
   winStreak: string;
   skillRating: string;
+  isFavorite: boolean;
 }
 
 export interface ApiResponse {

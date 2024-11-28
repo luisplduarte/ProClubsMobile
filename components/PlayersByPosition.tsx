@@ -14,25 +14,25 @@ type Props = {
 export default function PlayersByPosition({ players, position, onPress }: Props) {
   return (
     <>
-        <Text style={styles.text}>{position} ({players.length})</Text>
-        <View style={styles.wrapContainer}>
-          {players.length ? 
-            players.sort((a, b) => parseInt(b.gamesPlayed) - parseInt(a.gamesPlayed)).map((player) => {
-                return (
-                    <CardLayout style={styles.card} onClick={() => onPress(player.name)}>
-                        <View>
-                            <Text style={styles.text}>{player.name}</Text>
-                            <Text style={styles.playerDetails}>Games: {player.gamesPlayed}</Text>
-                            <Text style={styles.playerDetails}>Goals: {player.goals}</Text>
-                            <Text style={styles.playerDetails}>Assists: {player.assists}</Text>
-                            <Text style={styles.playerDetails}>Average rating: {player.ratingAve}</Text>
-                        </View>
-                    </CardLayout>
-                )
-            }) : 
-            <Text style={styles.playerDetails}>No {position} in the club</Text>
-          }
-        </View>
+      <Text style={styles.text}>{position} ({players.length})</Text>
+      <View style={styles.wrapContainer}>
+        {players.length ? 
+          players.sort((a, b) => parseInt(b.gamesPlayed) - parseInt(a.gamesPlayed)).map((player) => {
+            return (
+              <CardLayout key={player.name} style={styles.card} onClick={() => onPress(player.name)}>
+                <View>
+                  <Text style={styles.text}>{player.name}</Text>
+                  <Text style={styles.playerDetails}>Games: {player.gamesPlayed}</Text>
+                  <Text style={styles.playerDetails}>Goals: {player.goals}</Text>
+                  <Text style={styles.playerDetails}>Assists: {player.assists}</Text>
+                  <Text style={styles.playerDetails}>Average rating: {player.ratingAve}</Text>
+                </View>
+              </CardLayout>
+            )
+          }) : 
+          <Text style={styles.playerDetails}>No {position} in the club</Text>
+        }
+      </View>
     </>
   );
 };
